@@ -8,7 +8,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-// velg port (3000 lokalt og på serveren)
+
 var port = process.env.PORT || 3000;
 
 app.use(logger('dev'));
