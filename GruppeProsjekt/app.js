@@ -8,15 +8,17 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-
 var port = process.env.PORT || 3000;
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -24,3 +26,5 @@ app.use('/users', usersRouter);
 app.listen(port, () => {
   console.log('Server running on port ' + port);
 });
+
+module.exports = app;
