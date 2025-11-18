@@ -21,9 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
     answerInput.style.padding = "6px";
     answerCell.appendChild(answerInput);
 
+    // minus button
+    const minusCell = document.createElement("td");
+    const subtract = document.createElement("button");
+
+    subtract.textContent = "–";
+    subtract.style.padding = "6px";
+    subtract.style.cursor = "pointer";
+
+    // når knappen trykkes -> fjern raden
+    subtract.addEventListener("click", () => {
+      row.remove();
+    });
+
     // Add cells to row
     row.appendChild(wordCell);
     row.appendChild(answerCell);
+    row.appendChild(subtract);
 
     // Insert row into table
     tableBody.appendChild(row);
