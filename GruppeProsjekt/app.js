@@ -14,6 +14,7 @@ var port = process.env.PORT || 3000;
 var smsRouter = require('./routes/sms');
 app.use('/api', smsRouter);
 
+// middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
