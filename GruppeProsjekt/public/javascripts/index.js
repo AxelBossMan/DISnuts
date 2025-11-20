@@ -43,3 +43,20 @@ document.addEventListener("DOMContentLoaded", () => {
     tableBody.appendChild(row);
   });
 });
+
+document.getElementById("sendSMSBtn").addEventListener("click", async () => {
+  const response = await fetch("/api/send", {
+      method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+      }
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+      alert("Message sent! SID: " + result.sid);
+  } else {
+      alert("Error: " + result.error);
+  }
+});
