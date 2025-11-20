@@ -7,34 +7,35 @@
 </head>
 
 <body>
-  <div id="info">
-    <h1>Understory – message function</h1>
+  <div id="main">
+    <div id="info">
+      <h1>Understory – message function</h1>
+    </div>
+  
+    <div id="textBox">
+      <textarea id="messageInput" placeholder="Type intro here"></textarea>
+      <p>Select which operating words you want and the answers</p>
+    </div>
+  
+    <div id="tabell">
+      <table id="wordTable">
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  
+    <div id="buttons">
+      <button id="addRowBtn">+ Add row</button>
+      <button id="save">Save</button>
+    </div>
   </div>
-  <div id="textBox">
-    <input type="text" id="messageInput" placeholder="Type intro here">
-    <p>Select which operating words you want and the answers</p>
-  </div>
-  <div id="tabell">
-    <table id="wordTable"  style="border-collapse: collapse; margin-top:20px;">
-      <thead>
-        <tr>
-          <th style="padding: 10px;">Word</th>
-          <th style="padding: 10px;">Answer</th>
-        </tr>
-      </thead>
-      <tbody>
-    
-      </tbody>
-    </table>
-  </div>
-  <div id="buttons">
-    <button id="addRowBtn" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-      + Add row
-    </button>
-    <button id="save" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-      Save
-    </button>
-  </div>
+
   <script src="/javascripts/index.js"></script>
 </body>
 
