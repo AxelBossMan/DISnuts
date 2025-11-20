@@ -3,32 +3,38 @@
 
 <head>
   <title>DISnuts</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/index.css">
 </head>
 
 <body>
-  <h1>Understory – message function</h1>
-  <p>Select which operating words you want and the answers</p>
-
-  <table id="wordTable"  style="border-collapse: collapse; margin-top:20px;">
-    <thead>
-      <tr>
-        <th style="padding: 10px;">Word</th>
-        <th style="padding: 10px;">Answer</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Rows will be added here by index.js -->
-    </tbody>
-  </table>
-
-  <button id="addRowBtn" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-    + Add row
-  </button>
-  <button id="save" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-    Save
-  </button>
-
+  <div id="info">
+    <h1>Understory – message function</h1>
+  </div>
+  <div id="textBox">
+    <input type="text" id="messageInput" placeholder="Type intro here">
+    <p>Select which operating words you want and the answers</p>
+  </div>
+  <div id="tabell">
+    <table id="wordTable"  style="border-collapse: collapse; margin-top:20px;">
+      <thead>
+        <tr>
+          <th style="padding: 10px;">Word</th>
+          <th style="padding: 10px;">Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+    
+      </tbody>
+    </table>
+  </div>
+  <div id="buttons">
+    <button id="addRowBtn" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
+      + Add row
+    </button>
+    <button id="save" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
+      Save
+    </button>
+  </div>
   <script src="/javascripts/index.js"></script>
 </body>
 
