@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     subtract.textContent = "–";
     subtract.style.padding = "6px";
+    subtract.style.marginLeft = "5px";  
+    subtract.style.marginTop = "10px";  
+    subtract.style.backgroundColor = "rgb(255,182,193)";  
     subtract.style.cursor = "pointer";
 
     // når knappen trykkes -> fjern raden
