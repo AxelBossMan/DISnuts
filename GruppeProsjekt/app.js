@@ -10,6 +10,10 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
+// SMS route
+var smsRouter = require('./routes/sms');
+app.use('/api', smsRouter);
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
