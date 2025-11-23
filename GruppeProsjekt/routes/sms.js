@@ -8,7 +8,6 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-// POST /api/send-sms
 router.post("/send", async (req, res) => {
   try {
     const message = await client.messages.create({
