@@ -1,54 +1,54 @@
-body {
-    padding: 20px;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  }
-  
-  a {
-    color: #00B7FF;
-  }
-
-#main{
-    width: 40%;
-    border: 2px solid;
-    padding: 5px;
-}
-#main h1 {
-    margin-top: 0;
-  }
-
-#info{padding: 0px;}
-  /* Text box */
-  #messageInput {
-    width: 350px;
-    height: 150px;
-    padding: 4px 8px;         
-    box-sizing: border-box;
-    font-size: 14px;
-    resize: vertical;
-  }
-  
-  /* Table */
-  #wordTable {
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
-  #wordTable th,
-  #wordTable td {
-    padding: 10px;
-   
-  }
-  
-  /* Buttons */
-  #addRowBtn,
-  #save {
-    margin-top: 20px;
-    padding: 8px 14px;
-    cursor: pointer;
-  }
-  #buttons {
-    display: flex;
+  body {
+      padding: 20px;
+      font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    }
     
-    margin-top: 20px;
+    a {
+      color: #00B7FF;
+    }
+
+  #main{
+      width: 40%;
+      border: 2px solid;
+      padding: 5px;
   }
-  #addRowBtn{margin-right: 5px;}
+  #main h1 {
+      margin-top: 0;
+    }
+
+  #info{padding: 0px;}
+    /* Text box */
+    #messageInput {
+      width: 350px;
+      height: 150px;
+      padding: 4px 8px;         
+      box-sizing: border-box;
+      font-size: 14px;
+      resize: vertical;
+    }
+    
+    /* Table */
+    #wordTable {
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    #wordTable th,
+    #wordTable td {
+      padding: 10px;
+    
+    }
+    
+    /* Buttons */
+    #addRowBtn,
+    #save {
+      margin-top: 20px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    #buttons {
+      display: flex;
+      
+      margin-top: 20px;
+    }
+    #addRowBtn{margin-right: 5px;}

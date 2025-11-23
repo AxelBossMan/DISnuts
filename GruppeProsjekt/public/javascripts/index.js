@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
-  const saveBtn = document.getElementById("sendSMSBtn");
+
 
   addBtn.addEventListener("click", () => {
     const row = document.createElement("tr");
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtract.textContent = "–";
     subtract.style.padding = "6px";
     subtract.style.marginLeft = "5px";
-    subtract.style.marginTop = "10px";
+    subtract.style.marginTop = "0px";
     subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
 
