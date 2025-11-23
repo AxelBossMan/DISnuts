@@ -8,44 +8,80 @@
 </head>
 
 <body>
-  <div id="main">
-    <div id="info">
-      <h1>Understory – message function</h1>
+  <div id="layout">
+    <!-- Left side -->
+    <div id="main">
+      <div id="info">
+        <h1>Understory – message function</h1>
+      </div>
+
+      <div id="textBox">
+        <textarea
+          id="messageInput"
+          placeholder="Type intro here"
+        ></textarea>
+        <p>Select which operating words you want and the answers</p>
+      </div>
+
+      <div id="tabell">
+        <table id="wordTable">
+          <thead>
+            <tr>
+              <th>Word</th>
+              <th>Answer</th>
+              <th style="width: 40px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+           
+          </tbody>
+        </table>
+      </div>
+
+      <div id="buttons">
+        <button id="addRowBtn" type="button">
+          + Add row
+        </button>
+        <button id="sendSMSBtn" type="button">
+          Save
+        </button>
+      </div>
     </div>
 
-    <div id="textBox">
-      <textarea
-        id="messageInput"
-        placeholder="Type intro here"
-      ></textarea>
-      <p>Select which operating words you want and the answers</p>
-    </div>
+    <!-- iPhone-preview -->
+    <div id="phonePreview">
+      <div class="phone-frame">
 
-    <div id="tabell">
-      <table id="wordTable">
-        <thead>
-          <tr>
-            <th>Word</th>
-            <th>Answer</th>
-            <th style="width: 40px;"></th> <!-- tom headerkolonne for delete-knappen -->
-          </tr>
-        </thead>
-        <tbody>
-          <!-- rader legges inn med JS -->
-        </tbody>
-      </table>
-    </div>
+        <div class="phone-screen">
+          <div class="phone-status-bar">
+            <span class="phone-time">09:41</span>
+            <span class="phone-status-dots">● ● ●</span>
+          </div>
 
-    <div id="buttons">
-      <button id="addRowBtn" type="button">
-        + Add row
-      </button>
-      <button id="sendSMSBtn" type="button">
-        Save
-      </button>
+          <div class="phone-header">
+            <div class="phone-avatar">U</div>
+            <div class="phone-header-text">
+              <div class="phone-title">Company name </div>
+              <div class="phone-subtitle">iMessage</div>
+            </div>
+          </div>
+
+          <div class="phone-messages" id="phoneMessages">
+            
+          </div>
+
+          <div class="phone-input-bar">
+            <div class="phone-input-placeholder">Message…</div>
+            <div class="phone-send">↑</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="/javascripts/index.js"></script>
 </body>
+
 </html>
+
+

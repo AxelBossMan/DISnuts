@@ -199,3 +199,202 @@ a:hover {
     font-size: 22px;
   }
 }
+
+
+/* Layout: venstre config + høyre telefon */
+#layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* Juster #main litt, siden det nå bare er venstre kort */
+#main {
+  width: 100%;
+  max-width: 720px;
+  background: #f9fafb;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  padding: 24px 28px 28px;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.35),
+    0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+/* Telefon-ramme */
+#phonePreview {
+  flex-shrink: 0;
+}
+
+.phone-frame {
+  width: 280px;
+  height: 560px;
+  border-radius: 40px;
+  background: #020617;
+  padding: 10px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(148, 163, 184, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Skjerm inni telefonen */
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  background: radial-gradient(circle at top, #0b1120 0, #020617 55%, #020617 100%);
+  padding: 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  color: #e5e7eb;
+  font-size: 12px;
+}
+
+/* Statusbar */
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.phone-time {
+  font-weight: 500;
+}
+
+.phone-status-dots {
+  font-size: 8px;
+}
+
+/* Header i meldingsappen */
+.phone-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  margin-bottom: 8px;
+}
+
+.phone-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #022c22;
+}
+
+.phone-header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.phone-subtitle {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Meldingsområdet */
+.phone-messages {
+  flex: 1;
+  padding: 6px 2px 6px;
+  overflow-y: auto;
+}
+
+/* Bobler */
+.phone-bubble {
+  display: inline-block;
+  max-width: 80%;
+  padding: 7px 9px;
+  border-radius: 16px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.phone-bubble.system {
+  background: rgba(15, 23, 42, 0.6);
+  color: #e5e7eb;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 12px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  width: 100%;
+}
+
+.phone-bubble.user {
+  background: #4f46e5;
+  color: #f9fafb;
+  margin-left: auto;
+  margin-right: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.phone-bubble.reply {
+  background: #111827;
+  color: #e5e7eb;
+  margin-right: auto;
+  margin-left: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* Input-linje nederst */
+.phone-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px 4px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  margin-top: 4px;
+}
+
+.phone-input-placeholder {
+  flex: 1;
+  font-size: 11px;
+  color: #9ca3af;
+  padding-left: 6px;
+}
+
+.phone-send {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #022c22;
+}
+
+/* Juster layout på små skjermer */
+@media (max-width: 900px) {
+  #layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #phonePreview {
+    margin-top: 24px;
+  }
+}
