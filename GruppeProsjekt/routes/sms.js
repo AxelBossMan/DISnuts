@@ -14,7 +14,6 @@ router.post("/send", async (req, res) => {
     const message = await client.messages.create({
       from: process.env.TWILIO_PHONE_NUMBER,
       to: process.env.TWILIO_PHONE_RECIPIENT,
-      body: "Automatic test message from Understory message function!"
       body: "Test melding!"
     });
 
