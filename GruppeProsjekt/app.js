@@ -10,22 +10,22 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
-// SMS route
+//SMS route
 var smsRouter = require('./routes/sms');
 app.use('/api', smsRouter);
 
-// middleware
+//middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
-app.use(express.static(path.join(__dirname, 'public')));
-
 // routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // start serveren
 app.listen(port, () => {

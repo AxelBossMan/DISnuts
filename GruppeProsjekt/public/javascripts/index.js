@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
+  const saveBtn = document.getElementById("sendSMSBtn");
 
   addBtn.addEventListener("click", () => {
     const row = document.createElement("tr");
@@ -27,25 +28,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     subtract.textContent = "–";
     subtract.style.padding = "6px";
-    subtract.style.marginLeft = "5px";  
-    subtract.style.marginTop = "10px";  
-    subtract.style.backgroundColor = "rgb(255,182,193)";  
+    subtract.style.marginLeft = "5px";
+    subtract.style.marginTop = "10px";
+    subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
 
-    // når knappen trykkes -> fjern raden
     subtract.addEventListener("click", () => {
       row.remove();
     });
 
-    // Add cells to row
+    minusCell.appendChild(subtract);
+
     row.appendChild(wordCell);
     row.appendChild(answerCell);
-    row.appendChild(subtract);
+    row.appendChild(minusCell);
 
-    // Insert row into table
     tableBody.appendChild(row);
   });
-});
+  
+
+})
 
 // Send SMS button functionality
 document.getElementById("sendSMSBtn").addEventListener("click", async () => {
