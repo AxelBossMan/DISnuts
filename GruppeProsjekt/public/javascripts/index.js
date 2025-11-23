@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
       } else {
-        // Hvis ingen ord lagt til
+
         html += `
           <div class="phone-bubble user">
             ${introText.replace(/\n/g, "<br>")}<br>
