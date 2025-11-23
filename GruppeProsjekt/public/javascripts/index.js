@@ -47,7 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Send SMS button functionality
 document.getElementById("sendSMSBtn").addEventListener("click", async () => {
+  // Send POST request to /api/send
   const response = await fetch("/api/send", {
       method: "POST",
       headers: {

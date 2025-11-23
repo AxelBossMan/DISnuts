@@ -10,11 +10,13 @@ const client = twilio(
 
 // POST /api/send-sms
 router.post("/send", async (req, res) => {
+  //Sender en test melding
   try {
     const message = await client.messages.create({
       from: process.env.TWILIO_PHONE_NUMBER,
       to: process.env.TWILIO_PHONE_RECIPIENT,
       body: "Automatic test message from Understory message function!"
+      body: "Test melding!"
     });
 
     res.json({ success: true, sid: message.sid });
