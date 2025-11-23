@@ -27,9 +27,5 @@ app.use('/users', usersRouter);
 // gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// start serveren
-app.listen(port, () => {
-  console.log('Server running on port ' + port);
-});
 
 module.exports = app;
