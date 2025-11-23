@@ -1,54 +1,201 @@
-body {
-    padding: 20px;
-    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  }
-  
-  a {
-    color: #00B7FF;
-  }
-
-#main{
-    width: 40%;
-    border: 2px solid;
-    padding: 5px;
+/* Base */
+* {
+  box-sizing: border-box;
 }
+
+body {
+  margin: 0;
+  padding: 40px;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #111827 0, #111827 35%, #111827 40%, #0f172a 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: #111827;
+}
+
+/* Linker (hvis du får noen senere) */
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Hovedkortet */
+#main {
+  width: 100%;
+  max-width: 720px;
+  background: #f9fafb;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  padding: 24px 28px 28px;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.35),
+    0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+/* Header */
 #main h1 {
-    margin-top: 0;
+  margin: 0 0 14px 0;
+  font-size: 26px;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  color: #020617;
+}
+
+#info {
+  padding: 0;
+}
+
+/* Intro-tekstfelt */
+#textBox {
+  margin-top: 6px;
+  margin-bottom: 18px;
+}
+
+#messageInput {
+  width: 100%;
+  min-height: 140px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  background: #ffffff;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+#messageInput::placeholder {
+  color: #9ca3af;
+}
+
+#messageInput:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.4);
+  background: #ffffff;
+}
+
+#textBox p {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* Tabellområde */
+#tabell {
+  margin-top: 10px;
+}
+
+/* Selve tabellen */
+#wordTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  background: #fefefe;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+#wordTable thead {
+  background: #f3f4f6;
+}
+
+#wordTable th,
+#wordTable td {
+  padding: 10px 12px;
+  font-size: 14px;
+  text-align: left;
+}
+
+#wordTable th {
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#wordTable tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+#wordTable tbody tr:hover {
+  background: #e5f0ff;
+}
+
+/* Knappeseksjon */
+#buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* Felles knappestil */
+#addRowBtn,
+#sendSMSBtn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    transform 0.08s ease-out,
+    box-shadow 0.08s ease-out,
+    background-color 0.12s ease-out,
+    color 0.12s ease-out;
+}
+
+/* Primærknapp (Save) */
+#sendSMSBtn {
+  background: #111827;
+  color: #f9fafb;
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.28);
+}
+
+#sendSMSBtn:hover {
+  background: #020617;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.38);
+}
+
+#sendSMSBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 10px rgba(15, 23, 42, 0.26);
+}
+
+/* Sekundærknapp (+ Add row) */
+#addRowBtn {
+  background: #e5e7eb;
+  color: #111827;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.12);
+}
+
+#addRowBtn:hover {
+  background: #d1d5db;
+  transform: translateY(-1px);
+}
+
+#addRowBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.18);
+}
+
+/* Responsiv justering på små skjermer */
+@media (max-width: 768px) {
+  body {
+    padding: 20px;
+    align-items: stretch;
   }
 
-#info{padding: 0px;}
-  /* Text box */
-  #messageInput {
-    width: 350px;
-    height: 150px;
-    padding: 4px 8px;         
-    box-sizing: border-box;
-    font-size: 14px;
-    resize: vertical;
+  #main {
+    padding: 18px 16px 20px;
   }
-  
-  /* Table */
-  #wordTable {
-    border-collapse: collapse;
-    margin-top: 20px;
+
+  #main h1 {
+    font-size: 22px;
   }
-  
-  #wordTable th,
-  #wordTable td {
-    padding: 10px;
-   
-  }
-  
-  /* Buttons */
-  #addRowBtn,
-  #save {
-    margin-top: 20px;
-    padding: 8px 14px;
-    cursor: pointer;
-  }
-  #buttons {
-    display: flex;
-    
-    margin-top: 20px;
-  }
-  #addRowBtn{margin-right: 5px;}
+}

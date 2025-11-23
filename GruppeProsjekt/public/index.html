@@ -1,45 +1,51 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>DISnuts</title>
-  <link rel="stylesheet" href="/stylesheets/index.css">
+  <meta charset="UTF-8" />
+  <title>Understory – message function</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/stylesheets/index.css" />
 </head>
 
 <body>
-
   <div id="main">
+    <div id="info">
+      <h1>Understory – message function</h1>
+    </div>
 
-  <div id="info">
-    <h1>Understory – message function</h1>
+    <div id="textBox">
+      <textarea
+        id="messageInput"
+        placeholder="Type intro here"
+      ></textarea>
+      <p>Select which operating words you want and the answers</p>
+    </div>
+
+    <div id="tabell">
+      <table id="wordTable">
+        <thead>
+          <tr>
+            <th>Word</th>
+            <th>Answer</th>
+            <th style="width: 40px;"></th> <!-- tom headerkolonne for delete-knappen -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- rader legges inn med JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="buttons">
+      <button id="addRowBtn" type="button">
+        + Add row
+      </button>
+      <button id="sendSMSBtn" type="button">
+        Save
+      </button>
+    </div>
   </div>
-  <div id="textBox">
-    <input type="text" id="messageInput" placeholder="Type intro here">
-    <p>Select which operating words you want and the answers</p>
-  </div>
-  <div id="tabell">
-    <table id="wordTable"  style="border-collapse: collapse; margin-top:20px;">
-      <thead>
-        <tr>
-          <th style="padding: 10px;">Word</th>
-          <th style="padding: 10px;">Answer</th>
-        </tr>
-      </thead>
-      <tbody>
-    
-      </tbody>
-    </table>
-  </div>
-  <div id="buttons">
-    <button id="addRowBtn" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-      + Add row
-    </button>
-    <button id="sendSMSBtn" style="margin-top:20px; padding:8px 14px; cursor:pointer;">
-      Save
-    </button>
-  </div>
-  
-  </div>
+
   <script src="/javascripts/index.js"></script>
 </body>
 </html>
