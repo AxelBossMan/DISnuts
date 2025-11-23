@@ -10,22 +10,21 @@ var app = express();
 
 var port = process.env.PORT || 3000;
 
-//SMS route
-var smsRouter = require('./routes/sms');
-app.use('/api', smsRouter);
-
-//middleware
+// middleware (MÅ komme før routes!)
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// statiske filer
+app.use(express.static(path.join(__dirname, 'public')));
+
 // routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
-app.use(express.static(path.join(__dirname, 'public')));
-
+// SMS route (nå fungerer req.body)
+var smsRouter = require('./routes/sms');
+app.use('/api', smsRouter);
 
 module.exports = app;

@@ -5,66 +5,81 @@ document.addEventListener("DOMContentLoaded", () => {
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
 
- 
+  // global payload som både preview og send kan bruke
+  let payload = { intro: "", keywords: [] };
+
+  // iphone preview
   function buildPreview() {
     const intro = introInput.value.trim();
     const rows = document.querySelectorAll("#wordTable tbody tr");
 
     let html = "";
 
-    //label
+    // upper label
     html += `
       <div class="phone-bubble system">
-        Scheduled message preview <br>
+        SCHEDULED MESSAGE PREVIEW
       </div>
     `;
 
-    //intro text mesaage 
-    const introText = intro;
+    // Intro
+    const introText = intro || "";
 
-    // get all of the words and answers
     const pairs = [];
-      rows.forEach((row) => {
-        const wordInput = row.querySelector("input.word-input");
-        if (!wordInput) return;
 
-        const w = wordInput.value.trim();
-        if (w) {
-          pairs.push(w.toUpperCase());
-        }
+    rows.forEach((row) => {
+      const wordInput = row.querySelector("input.word-input");
+      const answerInput = row.querySelector("input.answer-input");
+
+      if (!wordInput || !answerInput) return;
+
+      const w = wordInput.value.trim();
+      const a = answerInput.value.trim();
+
+      if (w && a) {
+        pairs.push({
+          word: w.toUpperCase(),
+          answer: a,
+        });
+      }
+    });
+
+    // oppdater global payload her
+    payload = {
+      intro,
+      keywords: pairs,
+    };
+
+    console.log("pairs:", pairs);
+
+    if (pairs.length > 0) {
+      let listHTML = "<br><br>Available keywords:<br>";
+
+      pairs.forEach((pair) => {
+        listHTML += `• ${pair.word}<br>`;
       });
 
-      if (pairs.length > 0) {
-        let listHTML = "<br><br>Available keywords:<br>";
-      
-        pairs.forEach((word) => {
-          listHTML += `• ${word}<br>`;
-        });
-      
-        html += `
-          <div class="phone-bubble user">
-            ${introText.replace(/\n/g, "<br>")}
-            ${listHTML}
-          </div>
-        `;
-      } else {
-
-        html += `
-          <div class="phone-bubble user">
-            ${introText.replace(/\n/g, "<br>")}<br>
-            
-          </div>
-        `;
-      }
+      html += `
+        <div class="phone-bubble user">
+          ${introText.replace(/\n/g, "<br>")}
+          ${listHTML}
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="phone-bubble user">
+          ${introText.replace(/\n/g, "<br>")}<br>
+        </div>
+      `;
+    }
 
     phoneMessages.innerHTML = html;
   }
 
-  // make a new row
   function addRow() {
     const row = document.createElement("tr");
 
-    //word input
+    // Word input
     const wordCell = document.createElement("td");
     const wordInput = document.createElement("input");
     wordInput.type = "text";
@@ -105,12 +120,29 @@ document.addEventListener("DOMContentLoaded", () => {
     row.appendChild(minusCell);
 
     tableBody.appendChild(row);
+
+    wordInput.focus();
+
     buildPreview();
   }
 
-  //connect the ecents
   addBtn.addEventListener("click", addRow);
   introInput.addEventListener("input", buildPreview);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const target = e.target;
+      if (
+        target.tagName.toLowerCase() === "input" &&
+        (target.classList.contains("word-input") ||
+          target.classList.contains("answer-input"))
+      ) {
+        e.preventDefault();
+        addRow();
+      }
+    }
+  });
+
 
   sendBtn.addEventListener("click", async () => {
     const response = await fetch("/api/send", {
@@ -118,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(payload),
     });
 
     const result = await response.json();
