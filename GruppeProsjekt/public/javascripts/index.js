@@ -129,6 +129,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Bygg en første preview ved load
   buildPreview();
 });
