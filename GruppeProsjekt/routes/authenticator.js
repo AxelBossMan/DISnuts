@@ -7,7 +7,7 @@ const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 
 const loginLimiter = rateLimit({
-    windowMs: 3 * 60 * 1000, // 3 minute
+    windowMs: 1* 10 * 1000, // 10 seconds
     limit: 3, // limit each IP to 100 requests per windowMs
     standardHeaders: 'draft-8', // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
