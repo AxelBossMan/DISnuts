@@ -12,7 +12,7 @@ var usersRouter = require('./routes/users');
 var smsRouter = require('./routes/sms');
 var eventsRouter = require('./routes/events');
 var authRouter = require('./routes/authenticator');
-var chatRouter = require('./routes/chat');
+var chatRouter= require('./routes/chat');
 
 var app = express();
 var port = process.env.PORT || 3000;

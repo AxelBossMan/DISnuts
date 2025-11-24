@@ -33,15 +33,4 @@ router.post('/chat', async (req, res) => {
   }
 });
 
-  async function askChatGPT(prompt) {
-    const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  });
-
-  const data = await res.json();
-  console.log('Svar fra ChatGPT:', data.reply);
-}
-
-module.exports = {router, askChatGPT };
+module.exports = router
