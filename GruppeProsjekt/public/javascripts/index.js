@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
     subtract.style.borderRadius = "5px";
-
+    
     subtract.addEventListener("click", () => {
       row.remove();
       buildPreview();
