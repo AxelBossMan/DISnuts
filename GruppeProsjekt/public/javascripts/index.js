@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
   //const returnEvent = document.getElementById("return");
+  const generateBtn = document.getElementById("generate");
 
   
   // global payload som både preview og send kan bruke
@@ -222,6 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   return data.reply; 
 }
 
+  generateBtn.addEventListener("click", async () => {
   let intro = await askChatGPT(`
     Create a short and engaging reminder SMS message about an upcoming local event. 
     Use the following event information exactly as provided:
@@ -237,9 +239,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     - Friendly and inviting tone or match the event description tone
     `)
   
-  console.log("intro: ", intro)
+  // console.log("intro: ", intro)
   introInput.value = intro
-
+  buildPreview();
+  });
   // første preview
   buildPreview();
 
