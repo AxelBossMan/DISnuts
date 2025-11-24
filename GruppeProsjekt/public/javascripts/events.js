@@ -10,26 +10,44 @@ document.addEventListener("DOMContentLoaded", async () => {
   
       const events = await response.json();
   
+      // tøm grid
       grid.innerHTML = "";
   
+      // bygg kort
       events.forEach(ev => {
         grid.innerHTML += `
-          <div class="event-card">
+          <div class="event-card" data-event-id="${ev.event_id}">
             <div class="event-title">${ev.event_name}</div>
             <div class="event-meta">${ev.location} · ${new Date(ev.time).toLocaleDateString()}</div>
             <div class="event-footer">
-              <button class="event-button" type="button">
+              <button class="event-button manage-event" type="button">
                 Manage
               </button>
             </div>
           </div>
         `;
       });
+  
+      // legg til click-handlers på alle "Manage"-knapper
+      const buttons = grid.querySelectorAll(".manage-event");
+      buttons.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+          const ev = events[index]; // samme rekkefølge som forEach over
+  
+          // lagre valgt event i localStorage
+          localStorage.setItem("selectedEvent", JSON.stringify(ev));
+  
+          // gå tilbake til forsiden
+          window.location.href = "/";
+        });
+      });
+  
     } catch (err) {
       console.error(err);
       grid.innerHTML = `<p style="color:red;">Could not load events from server.</p>`;
     }
   
+    // return-knappen
     const returnBtn = document.getElementById("return");
     if (returnBtn) {
       returnBtn.addEventListener("click", () => {

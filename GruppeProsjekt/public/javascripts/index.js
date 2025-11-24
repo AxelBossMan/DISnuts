@@ -1,3 +1,28 @@
+// HENT VALGT EVENT FRA localStorage
+const selectedEventRaw = localStorage.getItem("selectedEvent");
+
+if (selectedEventRaw) {
+  try {
+    const selectedEvent = JSON.parse(selectedEventRaw);
+
+    // vis event-navn et sted i UI
+    const label = document.getElementById("selected-event-label");
+    if (label && selectedEvent.event_name) {
+      label.textContent = `Managing event: ${selectedEvent.event_name} (${selectedEvent.location})`;
+    }
+
+    // hvis du vil, kan du også bruke selectedEvent videre i koden her:
+    // - preutfylle intro-tekst
+    // - lagre event_id når du sender SMS-oppsett til backend
+    // osv.
+
+  } catch (e) {
+    console.error("Could not parse selectedEvent from localStorage", e);
+  }
+}
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
