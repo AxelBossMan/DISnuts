@@ -1,4 +1,5 @@
 require('dotenv').config({ path: __dirname + '/.env' });
+require('express-async-errors'); // to handle async errors try/catch
 
 var express = require('express');
 var path = require('path');
@@ -54,5 +55,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 //AUTH ROUTE
 const authRouter = require('./routes/authenticator');
 app.use('/authenticator', authRouter);
+
+// error handler
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+});
 
 module.exports = app;
