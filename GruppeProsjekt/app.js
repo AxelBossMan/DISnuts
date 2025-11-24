@@ -47,16 +47,10 @@ app.use('/users', usersRouter);
 var smsRouter = require('./routes/sms');
 app.use('/api', smsRouter);
 
-// autentiseringsruter
-const authRouter = require('./routes/authenticator');
-app.use('/', authRouter);
 
 // gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
 //AUTH ROUTE
 const authRouter = require('./routes/authenticator');
 app.use('/authenticator', authRouter);
