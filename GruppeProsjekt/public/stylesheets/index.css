@@ -88,6 +88,23 @@ a:hover {
   background: #ffffff;
 }
 
+/* Skeleton loader for textarea while generating */
+.skeleton {
+  position: relative;
+  color: transparent !important; /* hide text while loading */
+  background: linear-gradient(90deg, #f3f4f6 0%, #e6eef0 50%, #f3f4f6 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s linear infinite;
+}
+.skeleton::placeholder {
+  color: transparent;
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 #textBox p {
   margin-top: 8px;
   font-size: 13px;
