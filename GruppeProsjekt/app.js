@@ -43,18 +43,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-<<<<<<< Updated upstream
 // SMS route (nå fungerer req.body)
 var smsRouter = require('./routes/sms');
 app.use('/api', smsRouter);
-=======
+
 // autentiseringsruter
 const authRouter = require('./routes/authenticator');
 app.use('/', authRouter);
 
 // gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
 app.use(express.static(path.join(__dirname, 'public')));
->>>>>>> Stashed changes
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
