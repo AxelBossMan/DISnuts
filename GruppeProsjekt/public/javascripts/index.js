@@ -170,5 +170,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("return").addEventListener("click", () => {
-  window.location.href = "/event";
+  window.location.href = "/events";
 });
