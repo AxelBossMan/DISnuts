@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
     });
 
     // hent ren tekst ut av svaret
-    console.log('ChatGPT response:', response);
+    // console.log('ChatGPT response:', response);
     const text = response.output[0].content[0].text;
 
     res.json({ reply: text });
