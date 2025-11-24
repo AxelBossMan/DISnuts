@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const phoneMessages = document.getElementById("phoneMessages");
   //const returnEvent = document.getElementById("return");
 
+  
   // global payload som både preview og send kan bruke
   let payload = { intro: "", keywords: {} };
 
@@ -170,5 +171,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("return").addEventListener("click", () => {
-  window.location.href = "/event";
+  window.location.href = "/events";
 });
