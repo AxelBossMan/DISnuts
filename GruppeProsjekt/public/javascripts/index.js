@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
   const sendBtn = document.getElementById("sendSMSBtn");
+  const saveBtn = document.getElementById("saveSMSBtn");
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
   //const returnEvent = document.getElementById("return");
@@ -188,6 +189,23 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       alert("Error: " + result.error);
     }
+  });
+
+  saveBtn.addEventListener("click", async () => {
+    console.log("Saving payload:", payload);
+
+      const response = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert("Saved!");
+      } else {
+        alert("Save failed: " + (result.error || "unknown"));
+      }
   });
 
 
