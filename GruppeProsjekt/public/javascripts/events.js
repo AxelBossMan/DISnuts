@@ -28,16 +28,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       });
   
-      // legg til click-handlers på alle "Manage"-knapper
       const buttons = grid.querySelectorAll(".manage-event");
       buttons.forEach((btn, index) => {
         btn.addEventListener("click", () => {
-          const ev = events[index]; // samme rekkefølge som forEach over
-  
-          // lagre valgt event i localStorage
+          const ev = events[index]; 
           localStorage.setItem("selectedEvent", JSON.stringify(ev));
-  
-          // gå tilbake til forsiden
+          localStorage.setItem("selectedEventId", ev.id);
+
           window.location.href = "/";
         });
       });
