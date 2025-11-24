@@ -14,10 +14,18 @@
     <input class="inputField" name="email" placeholder="Email" required>
     <input class="inputField" type="password" name="password" placeholder="Password" required>
 
+    <p id="errorMsg" style="color:#b91c1c; margin-top:10px; font-size:14px; display:none;"></p>
+    
     <div id="buttons">
       <button id="sendSMSBtn" type="submit">Login</button>
     </div>
   </form>
+  <div style="margin-top:16px; text-align:center;">
+    <button id="createAccountBtn" 
+            style="background:none; border:none; color:#2563eb; cursor:pointer; font-size:15px;">
+        Create account here
+    </button>
+  </div>
 </div>
 
 <script src="/javascripts/login.js"></script>
