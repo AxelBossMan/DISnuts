@@ -1,7 +1,6 @@
 
-const config = require('../database/sqlconfig');         
-const { createDatabaseConnection } = require('../database/database'); 
 
+// HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 
 if (selectedEventRaw) {
@@ -19,7 +18,9 @@ if (selectedEventRaw) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+
+
+document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
   const sendBtn = document.getElementById("sendSMSBtn");
@@ -148,6 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     wordInput.focus();
 
     buildPreview();
+    
   }
 
   // events
@@ -206,8 +208,42 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
+  const { event_id, event_description, event_name, event_location, event_time } = JSON.parse(selectedEventRaw);
+
+   async function askChatGPT(prompt) {
+    const res = await fetch('/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+
+  const data = await res.json();
+  // console.log('Svar fra ChatGPT:', data.reply);
+  return data.reply; 
+}
+
+  let intro = await askChatGPT(`
+    Create a short and engaging reminder SMS message about an upcoming local event. 
+    Use the following event information exactly as provided:
+    Event name: ${event_name}
+    Description: ${event_description}
+    Location: ${event_location}
+    Time: ${event_time}
+
+    Requirements:
+    - Write in English
+    - Maximum length: 400 characters
+    - Must reference ALL the given event information
+    - Friendly and inviting tone or match the event description tone
+    `)
+  
+  console.log("intro: ", intro)
+  introInput.value = intro
+
   // første preview
   buildPreview();
+
+
 });
 
 document.getElementById("return").addEventListener("click", () => {
@@ -217,24 +253,38 @@ document.getElementById("return").addEventListener("click", () => {
 
 //skal integrere openai under sånn at info blir generert automatisk. Hent infromasjon fra SQL databasen om valgt event og generer intro tekst automatisk.
 document.addEventListener("DOMContentLoaded", async () => {
-  const db = await createDatabaseConnection(config);
-  event_id = localStorage.getItem("selectedEventId");
+  // console.log("selectedEventRaw", selectedEventRaw);
   
-  const eventinfo = await db.getInfoEvent(event_id);
-  console.log("eventinfo", eventinfo)
+//   const { event_id, event_description, event_name, event_location, event_time } = JSON.parse(selectedEventRaw);
 
-   async function askChatGPT(prompt) {
-    const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  });
+//    async function askChatGPT(prompt) {
+//     const res = await fetch('/chat', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ prompt }),
+//   });
 
-  const data = await res.json();
-  console.log('Svar fra ChatGPT:', data.reply);
-  return data.reply;
-}
+//   const data = await res.json();
+//   // console.log('Svar fra ChatGPT:', data.reply);
+//   return data.reply; 
+// }
 
-  let intro = askChatGPT(`Lag en kort og fengende introduksjonstekst for en SMS-kampanje som inviterer folk til å delta på et lokalt arrangement. Teksten skal være vennlig og oppfordre mottakeren til å svare med et nøkkelord for mer informasjon. Hold det under 200 tegn.`)
-  introInput.innerHTML = intro
+//   let intro = await askChatGPT(`
+//     Create a short and engaging reminder SMS message about an upcoming local event. 
+//     Use the following event information exactly as provided:
+//     Event name: ${event_name}
+//     Description: ${event_description}
+//     Location: ${event_location}
+//     Time: ${event_time}
+
+//     Requirements:
+//     - Write in English
+//     - Maximum length: 400 characters
+//     - Must reference ALL the given event information
+//     - Friendly and inviting tone or match the event description tone
+//     `)
+  
+//   console.log("intro: ", intro)
+//   const introInput = document.getElementById("messageInput");
+//   introInput.value = intro
 });

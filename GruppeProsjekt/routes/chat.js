@@ -8,8 +8,8 @@ const client = new OpenAI({
 });
 
 // POST /api/chat  { "prompt": "din tekst her" }
-router.post('/chat', async (req, res) => {
-  try {
+router.post('/', async (req, res) => {
+  try { 
     const { prompt } = req.body;
 
     if (!prompt) {
