@@ -21,8 +21,8 @@ app.use(cookieParser());
 app.use(helmet()); 
 
 // database
-const { createDatabaseConnection } = require("./database");
-const sqlConfig = require("./sqlconfig");
+const { createDatabaseConnection } = require("./database/database");
+const sqlConfig = require("./database/sqlconfig");
 // database connection
 let db;
 (async () => {
@@ -47,11 +47,12 @@ app.use('/users', usersRouter);
 var smsRouter = require('./routes/sms');
 app.use('/api', smsRouter);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+
+// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
+app.use(express.static(path.join(__dirname, 'public')));
+
 //AUTH ROUTE
-const authRouter = require('./routes/auth');
-app.use('/auth', authRouter);
+const authRouter = require('./routes/authenticator');
+app.use('/authenticator', authRouter);
 
 module.exports = app;
