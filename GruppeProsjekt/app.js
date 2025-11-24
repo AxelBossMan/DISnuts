@@ -21,8 +21,8 @@ app.use(cookieParser());
 app.use(helmet()); 
 
 // database
-const { createDatabaseConnection } = require("./database");
-const sqlConfig = require("./sqlconfig");
+const { createDatabaseConnection } = require("./database/database");
+const sqlConfig = require("./database/sqlconfig");
 // database connection
 let db;
 (async () => {
@@ -51,7 +51,7 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 //AUTH ROUTE
-const authRouter = require('./routes/auth');
-app.use('/auth', authRouter);
+const authRouter = require('./routes/authenticator');
+app.use('/authenticator', authRouter);
 
 module.exports = app;
