@@ -20,8 +20,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(helmet()); 
 
+// database
+const { createDatabaseConnection } = require("./database");
+const sqlConfig = require("./sqlconfig");
+// database connection
+let db;
+(async () => {
+  try {
+    db = await createDatabaseConnection(sqlConfig);
+    app.locals.db = db;  // gjør databasen tilgjengelig i alle routes
+    console.log("Database connected");
+  } catch (err) {
+    console.error("Database connection failed:", err);
+  }
+})();
+
 // statiske filer
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 // routes
 app.use('/', indexRouter);
@@ -34,5 +50,8 @@ app.use('/api', smsRouter);
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+//AUTH ROUTE
+const authRouter = require('./routes/auth');
+app.use('/auth', authRouter);
 
 module.exports = app;
