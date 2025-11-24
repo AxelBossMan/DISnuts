@@ -6,26 +6,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const phoneMessages = document.getElementById("phoneMessages");
 
   // global payload som både preview og send kan bruke
-  let payload = { intro: "", keywords: [] };
+  let payload = { intro: "", keywords: {} };
 
-  // iphone preview
+  // iPhone-preview
   function buildPreview() {
     const intro = introInput.value.trim();
     const rows = document.querySelectorAll("#wordTable tbody tr");
 
     let html = "";
 
-    // upper label
+    // label øverst
     html += `
       <div class="phone-bubble system">
         SCHEDULED MESSAGE PREVIEW
       </div>
     `;
 
-    // Intro
     const introText = intro || "";
 
-    const pairs = [];
+   
+    const pairs = {};
 
     rows.forEach((row) => {
       const wordInput = row.querySelector("input.word-input");
@@ -37,26 +37,25 @@ document.addEventListener("DOMContentLoaded", () => {
       const a = answerInput.value.trim();
 
       if (w && a) {
-        pairs.push({
-          word: w.toUpperCase(),
-          answer: a,
-        });
+        pairs[w.toUpperCase()] = a;   
       }
     });
 
-    // oppdater global payload her
+
     payload = {
       intro,
       keywords: pairs,
     };
 
-    console.log("pairs:", pairs);
+    console.log("payload:", payload);
 
-    if (pairs.length > 0) {
+    const words = Object.keys(pairs);
+
+    if (words.length > 0) {
       let listHTML = "<br><br>Available keywords:<br>";
 
-      pairs.forEach((pair) => {
-        listHTML += `• ${pair.word}<br>`;
+      words.forEach((word) => {
+        listHTML += `• ${word}<br>`;
       });
 
       html += `
@@ -75,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     phoneMessages.innerHTML = html;
   }
+
 
   function addRow() {
     const row = document.createElement("tr");
@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
     answerInput.addEventListener("input", buildPreview);
     answerCell.appendChild(answerInput);
 
-    // minus button
+    // minus-knapp
     const minusCell = document.createElement("td");
     const subtract = document.createElement("button");
     subtract.textContent = "–";
@@ -120,15 +120,16 @@ document.addEventListener("DOMContentLoaded", () => {
     row.appendChild(minusCell);
 
     tableBody.appendChild(row);
-
     wordInput.focus();
 
     buildPreview();
   }
 
+  // events
   addBtn.addEventListener("click", addRow);
   introInput.addEventListener("input", buildPreview);
 
+  // Enter i et inputfelt = legg til ny rad
   document.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       const target = e.target;
@@ -143,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-
+  // Send-knappen
   sendBtn.addEventListener("click", async () => {
     const response = await fetch("/api/send", {
       method: "POST",
@@ -162,5 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // første preview
   buildPreview();
 });
