@@ -12,6 +12,7 @@ var usersRouter = require('./routes/users');
 var smsRouter = require('./routes/sms');
 var eventsRouter = require('./routes/events');
 var authRouter = require('./routes/authenticator');
+var chatRouter= require('./routes/chat');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -51,6 +52,9 @@ app.use('/api/events', eventsRouter); // VIKTIG: nå får du GET /api/events
 
 // auth-rute
 app.use('/authenticator', authRouter);
+
+// chat router
+app.use('/api/chat', chatRouter);
 
 // error handler
 app.use((err, req, res, next) => {

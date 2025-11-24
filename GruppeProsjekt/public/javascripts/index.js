@@ -1,27 +1,23 @@
-// HENT VALGT EVENT FRA localStorage
+
+const config = require('../database/sqlconfig');         
+const { createDatabaseConnection } = require('../database/database'); 
+
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 
 if (selectedEventRaw) {
   try {
     const selectedEvent = JSON.parse(selectedEventRaw);
 
-    // vis event-navn et sted i UI
     const label = document.getElementById("selected-event-label");
     if (label && selectedEvent.event_name) {
-      label.textContent = `Managing event: ${selectedEvent.event_name} (${selectedEvent.location})`;
+      label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
     }
 
-    // hvis du vil, kan du også bruke selectedEvent videre i koden her:
-    // - preutfylle intro-tekst
-    // - lagre event_id når du sender SMS-oppsett til backend
-    // osv.
 
   } catch (e) {
     console.error("Could not parse selectedEvent from localStorage", e);
   }
 }
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
@@ -135,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtract.style.marginLeft = "5px";
     subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
+    subtract.style.borderRadius = "5px";
 
     subtract.addEventListener("click", () => {
       row.remove();
@@ -215,4 +212,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.getElementById("return").addEventListener("click", () => {
   window.location.href = "/events";
+});
+
+
+//skal integrere openai under sånn at info blir generert automatisk. Hent infromasjon fra SQL databasen om valgt event og generer intro tekst automatisk.
+document.addEventListener("DOMContentLoaded", async () => {
+  const db = await createDatabaseConnection(config);
+  event_id = localStorage.getItem("selectedEventId");
+  
+  const eventinfo = await db.getInfoEvent(event_id);
+  console.log("eventinfo", eventinfo)
+
+   async function askChatGPT(prompt) {
+    const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+
+  const data = await res.json();
+  console.log('Svar fra ChatGPT:', data.reply);
+  return data.reply;
+}
+
+  let intro = askChatGPT(`Lag en kort og fengende introduksjonstekst for en SMS-kampanje som inviterer folk til å delta på et lokalt arrangement. Teksten skal være vennlig og oppfordre mottakeren til å svare med et nøkkelord for mer informasjon. Hold det under 200 tegn.`)
+  introInput.innerHTML = intro
 });

@@ -1,17 +1,36 @@
-document.getElementById("registerForm").onsubmit = async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target).entries());
-  
-    const res = await fetch("/authenticator/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+const form = document.getElementById("registerForm");
+
+form.addEventListener("submit", async function (event) {
+    event.preventDefault(); // Stopper vanlig form-submission
+
+    // Henter verdier manuelt (tydeligere for studenter)
+    const companyName = form.company_name.value;
+    const email = form.email.value;
+    const phoneNumber = form.phone_number.value;
+    const password = form.password.value;
+
+    // Lager et vanlig JS-objekt for å sende til backend
+    const data = {
+        company_name: companyName,
+        email: email,
+        phone_number: phoneNumber,
+        password: password
+    };
+
+    // Sender request til backend
+    const response = await fetch("/authenticator/register", {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json" 
+        },
+        body: JSON.stringify(data)
     });
-  
-    const json = await res.json();
-    alert(json.message);
-  
-    if (json.success) {
-      window.location.href = "/login.html";
+
+    const result = await response.json();
+    alert(result.message);
+
+    // Hvis alt gikk bra → videre til login
+    if (result.success) {
+        window.location.href = "/login.html";
     }
-  };
+});

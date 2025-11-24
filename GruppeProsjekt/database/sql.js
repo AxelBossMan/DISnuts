@@ -24,6 +24,14 @@ class Database {
     const result = await pool.request().query(query);
     return result.recordset;
   }
+
+  async getInfoEvent(event_id) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input('event_id', sql.Int, event_id)
+      .query('SELECT * FROM dbo.events WHERE event_id = @event_id');
+    return result.recordset;
+  }
 }
 
 module.exports = new Database();
