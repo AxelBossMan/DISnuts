@@ -9,17 +9,22 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
+// In-memory storage for siste sendte pairs (WORD -> answer)
+// Frontend sender payload.keywords som et objekt: {WORD: answer}
+let lastPairs = {};
+
 
 router.post("/send", async (req, res) => {
-  const intro = req.body.intro || "";          
-  const keywords = req.body.keywords || []; 
+  const intro = req.body.intro || "";
+  // frontend sender keywords som et object: {WORD: answer}
+  const keywords = req.body.keywords || {};
 
   let bodyText = intro;
-
-  if (keywords.length > 0) {
+  const words = Object.keys(keywords || {});
+  if (words.length > 0) {
     bodyText += "\n\nAvailable keywords:\n";
-    keywords.forEach(k => {
-      bodyText += `• ${k.word}\n`;
+    words.forEach(w => {
+      bodyText += `• ${w}\n`;
     });
   }
 
@@ -29,6 +34,9 @@ router.post("/send", async (req, res) => {
       to: process.env.TWILIO_PHONE_RECIPIENT,
       body: bodyText
     });
+
+    // lagre siste pairs slik at incoming kan bruke dem
+    lastPairs = keywords;
 
     res.json({ success: true, sid: message.sid });
   } catch (err) {
@@ -42,12 +50,43 @@ router.post("/incoming",
   // Støtte for både JSON og urlencoded (Twilio kan poste urlencoded)
   express.json(),
   express.urlencoded({ extended: true }),
-  (req, res) => {
-    console.log("[sms.js] POST /api/incoming headers:", req.headers);
-    console.log("[sms.js] POST /api/incoming body:", req.body);
 
-    // Enkelt echo-svar for å se hva som kom inn
-    res.json({ success: true, received: req.body });
+  async (req, res) => {
+    try {
+      // Twilio/WhatsApp sender meldingen i 'Body' og avsender i 'From'
+      const incomingBody = (req.body.Body || req.body.body || "").toString().trim();
+      const from = req.body.From || req.body.from || "unknown";
+
+      console.log("[sms.js] POST /api/incoming from:", from);
+      console.log("[sms.js] POST /api/incoming body:", incomingBody);
+
+      const key = incomingBody.toUpperCase();
+
+      if (lastPairs && lastPairs[key]) {
+        const reply = lastPairs[key];
+        console.log(`[sms.js] Matched '${key}' -> replying with:`, reply);
+
+        try {
+          const msg = await client.messages.create({
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: from,
+            body: reply
+          });
+
+          console.log("[sms.js] Reply sent, sid:", msg.sid);
+          return res.json({ success: true, matched: key, sid: msg.sid });
+        } catch (sendErr) {
+          console.error("[sms.js] Error sending reply:", sendErr.message);
+          return res.status(500).json({ success: false, error: sendErr.message });
+        }
+      }
+
+      console.log("[sms.js] No matching keyword for incoming message.");
+      return res.json({ success: true, matched: false, received: req.body });
+    } catch (err) {
+      console.error("[sms.js] Error handling incoming:", err);
+      return res.status(500).json({ success: false, error: err.message });
+    }
   }
 );
 
