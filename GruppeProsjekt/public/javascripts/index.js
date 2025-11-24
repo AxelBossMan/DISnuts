@@ -8,7 +8,7 @@ if (selectedEventRaw) {
     // vis event-navn et sted i UI
     const label = document.getElementById("selected-event-label");
     if (label && selectedEvent.event_name) {
-      label.textContent = `Managing event: ${selectedEvent.event_name} (${selectedEvent.location})`;
+      label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
     }
 
     // hvis du vil, kan du også bruke selectedEvent videre i koden her:
