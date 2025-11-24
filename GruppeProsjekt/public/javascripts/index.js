@@ -1,4 +1,7 @@
 // HENT VALGT EVENT FRA localStorage
+const config = require('../database/sqlconfig');           // din config-fil
+const { createDatabaseConnection } = require('../database/database'); // din database.js
+
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 
 if (selectedEventRaw) {
@@ -215,4 +218,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.getElementById("return").addEventListener("click", () => {
   window.location.href = "/events";
+});
+
+const askChatGPT = require('./chat').askChatGPT;
+
+//skal integrere openai under sånn at info blir generert automatisk. Hent infromasjon fra SQL databasen om valgt event og generer intro tekst automatisk.
+document.addEventListener("DOMContentLoaded", async () => {
+  const db = await createDatabaseConnection(config);
+  event_id = localStorage.getItem("selectedEventId");
+  
+  const eventinfo = await db.readAll('events');
+  
+
+  let intro = askChatGPT(`Lag en kort og fengende introduksjonstekst for en SMS-kampanje som inviterer folk til å delta på et lokalt arrangement. Teksten skal være vennlig og oppfordre mottakeren til å svare med et nøkkelord for mer informasjon. Hold det under 200 tegn.`)
+  introInput.innerHTML = intro
 });
