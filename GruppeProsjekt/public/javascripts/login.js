@@ -27,7 +27,8 @@ loginForm.addEventListener("submit", async function (event) {
 
     // Hvis feil login → vis feilmelding
     if (!result.success) {
-        errorMsg.textContent = "Incorrect email or password.";
+        const msg = result.message ||result.error || "Login failed.";
+        errorMsg.textContent = msg;
         errorMsg.style.display = "block";
         return;
     }
