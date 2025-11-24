@@ -75,10 +75,11 @@ router.post("/verify", (req, res) => {
 
     delete codes[email];
 
-    //Sett cookie
-    res.cookie("companySession", email, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60, // 1 time
+     // Sett cookie tilgjengelig for frontend
+     res.cookie("companySession", email, {
+        httpOnly: false,       // frontend må kunne lese dette
+        path: "/",             // cookie gjelder for hele siden
+        maxAge: 1000 * 60 * 60 // 1 time
     });
     res.json({ success: true, message: "Login successful!" });
 });
