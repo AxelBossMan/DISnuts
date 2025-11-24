@@ -3,17 +3,29 @@ const express = require("express");
 const router = express.Router();
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-
+const {body, validationResult} = require("express-validator");
 // REGISTER
 // ----------------------
-router.post("/register", async (req, res) => {
+router.post("/register",
+    // express validator
+    [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
+    body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer")
+    ],
+    // check if valid and process registration
+    async (req, res) => {
+        const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, message: errors.array()[0].msg });
+    }
+    // database connection 
     const db = req.app.locals.db;
     const { company_name, email, phone_number, password } = req.body;
 
+    /*
     if (!company_name || !email || !password) {
         return res.status(400).json({ success: false, error: "Missing fields" });
     }
-
+*/
     try {
         await db.create(
             { company_name, email, phone_number, password },
@@ -30,7 +42,16 @@ router.post("/register", async (req, res) => {
 
 // LOGIN (sjekker passord og sender 2FA-kode)
 // ----------------------
-router.post("/login", async (req, res) => {
+router.post("/login", 
+    // express validator 
+    [body("email").isEmail(), body("password").notEmpty().isLength({ min: 8 })],
+    // check if valid and process login
+    async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
     const db = req.app.locals.db;
     const { email, password } = req.body;
 
