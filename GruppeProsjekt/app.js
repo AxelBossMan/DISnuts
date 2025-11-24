@@ -4,55 +4,51 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var helmet = require('helmet'); 
+var helmet = require('helmet');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var smsRouter = require('./routes/sms');
+var eventsRouter = require('./routes/events');
+var authRouter = require('./routes/authenticator');
 
 var app = express();
-
 var port = process.env.PORT || 3000;
 
-// middleware (MÅ komme før routes!)
+// middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(helmet()); 
+app.use(helmet());
 
-// database
+// database-oppsett via createDatabaseConnection hvis du trenger det andre steder
 const { createDatabaseConnection } = require("./database/database");
 const sqlConfig = require("./database/sqlconfig");
-// database connection
+
 let db;
 (async () => {
   try {
     db = await createDatabaseConnection(sqlConfig);
-    app.locals.db = db;  // gjør databasen tilgjengelig i alle routes
-    console.log("Database connected");
+    app.locals.db = db;
+    console.log("Database connected (createDatabaseConnection)");
   } catch (err) {
     console.error("Database connection failed:", err);
   }
 })();
 
-// statiske filer
+// statiske filer (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-// routes
+// sider
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// SMS route (nå fungerer req.body)
-var smsRouter = require('./routes/sms');
-app.use('/api', smsRouter);
+// API-ruter
+app.use('/api', smsRouter);          // f.eks. /api/sms eller hva du har der
+app.use('/api/events', eventsRouter); // VIKTIG: nå får du GET /api/events
 
-
-// gjør alt i /public tilgjengelig statisk (HTML, CSS, frontend JS)
-app.use(express.static(path.join(__dirname, 'public')));
-
-//AUTH ROUTE
-const authRouter = require('./routes/authenticator');
+// auth-rute
 app.use('/authenticator', authRouter);
 
 module.exports = app;
