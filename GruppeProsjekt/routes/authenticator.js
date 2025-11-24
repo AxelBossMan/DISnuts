@@ -97,3 +97,88 @@ async function sendEmail(email, code) {
 }
 
 module.exports = router;
+=======
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const db = require('../database');      
+const client = require('../twilio');     // <-- Twilio-klienten din
+const cookieParser = require('cookie-parser');
+
+// LOGIN: telefon + passord -> send 6-kode
+router.post('/login', (req, res) => {
+    const { phone, password } = req.body;
+
+    db.query(
+        "SELECT * FROM users WHERE phone = ?",
+        [phone],
+        async (err, results) => {
+            if (err) return res.status(500).send("Database error");
+            if (results.length === 0) return res.status(400).send("User not found");
+
+            const user = results[0];
+
+            // sjekk passord
+            const match = await bcrypt.compare(password, user.password_hash);
+            if (!match) return res.status(400).send("Wrong password");
+
+            // generer 6-sifret kode
+            const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // lagre i DB
+            db.query(
+                "UPDATE users SET login_code = ?, code_expires = DATE_ADD(NOW(), INTERVAL 5 MINUTE) WHERE id = ?",
+                [code, user.id]
+            );
+
+            // SEND SMS/WHATSAPP
+            client.messages.create({
+                from: process.env.TWILIO_PHONE_NUMBER, // eks. 'whatsapp:+14155238886'
+                to: `whatsapp:${phone}`,
+                body: `Din verifiseringskode er: ${code}`
+            });
+
+            // sett cookie
+            res.cookie("verify_user", user.id, { httpOnly: true });
+
+            res.redirect('/verify');
+        }
+    );
+});
+
+// VERIFISER 6-KODE
+router.post('/verify', (req, res) => {
+    const { code } = req.body;
+    const userId = req.cookies.verify_user;
+
+    if (!userId) return res.status(400).send("No pending verification");
+
+    db.query(
+        "SELECT login_code, code_expires FROM users WHERE id = ?",
+        [userId],
+        (err, results) => {
+            if (err) return res.status(500).send("Database error");
+            if (results.length === 0) return res.status(400).send("User not found");
+
+            const row = results[0];
+
+            // sjekk utløp
+            if (new Date(row.code_expires) < new Date())
+                return res.status(400).send("Code expired");
+
+            // sjekk kode
+            if (row.login_code !== code)
+                return res.status(400).send("Wrong code");
+
+            // logg inn
+            res.cookie("user_id", userId, { httpOnly: true });
+            res.clearCookie("verify_user");
+
+            res.redirect('/dashboard');
+        }
+    );
+});
+
+module.exports = router;
+
+>>>>>>> Stashed changes
