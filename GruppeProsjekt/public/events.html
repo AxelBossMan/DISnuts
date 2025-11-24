@@ -2,33 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Understory – message function</title>
+  <title>Understory – events</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/stylesheets/index.css" />
+  <link rel="stylesheet" href="/stylesheets/events.css" />
 </head>
 
 <body>
   <div id="layout">
     <div id="main">
       <div id="info">
-        <h1>Understory – Event selection</h1>
+        <h1>Understory – events</h1>
+        <p class="subtitle">Select which event you want to manage</p>
       </div>
 
-      <div id="textBox">
-        <p>Select which event you want to manage</p>
+      <div class="event-grid">
+        <div class="event-card">
+          <div class="event-title">DNB x Students Meetup</div>
+          <div class="event-meta">Oslo · 12 Dec 2025</div>
+          <div class="event-footer">
+            <button class="event-button" type="button">
+              Open message setup
+            </button>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-title">Launch Party – Understory</div>
+          <div class="event-meta">Copenhagen · 20 Jan 2026</div>
+          <div class="event-footer">
+            <button class="event-button" type="button">
+              Open message setup
+            </button>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-title">Internal Kickoff</div>
+          <div class="event-meta">Online · Draft</div>
+          <div class="event-footer">
+            <button class="event-button" type="button">
+              Open message setup
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div id="tabell">
-        <table id="wordTable">
-          
-        </table>
+      <div class="bottom-actions">
+        <button id="return" type="button" class="ghost-button">
+          Return
+        </button>
       </div>
     </div>
   </div>
 
-  <script src="/javascripts/index.js"></script>
+  <script>
+    document.getElementById("return").addEventListener("click", () => {
+      window.location.href = "/index.html";
+    });
+  </script>
 </body>
-
 </html>
-
-

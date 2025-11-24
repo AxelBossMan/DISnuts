@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("sendSMSBtn");
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
+  //const returnEvent = document.getElementById("return");
 
   // global payload som både preview og send kan bruke
   let payload = { intro: "", keywords: {} };
@@ -163,6 +164,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+
   // første preview
   buildPreview();
+});
+
+document.getElementById("return").addEventListener("click", () => {
+  window.location.href = "/event";
 });

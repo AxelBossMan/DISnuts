@@ -14,4 +14,8 @@ router.get('/', function (req, res, next) {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+router.get('/event', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/event.html'));
+});
+
 module.exports = router;
