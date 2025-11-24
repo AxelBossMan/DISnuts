@@ -8,8 +8,8 @@ const client = new OpenAI({
 });
 
 // POST /api/chat  { "prompt": "din tekst her" }
-router.post('/chat', async (req, res) => {
-  try {
+router.post('/', async (req, res) => {
+  try { 
     const { prompt } = req.body;
 
     if (!prompt) {
@@ -23,7 +23,7 @@ router.post('/chat', async (req, res) => {
     });
 
     // hent ren tekst ut av svaret
-    console.log('ChatGPT response:', response);
+    // console.log('ChatGPT response:', response);
     const text = response.output[0].content[0].text;
 
     res.json({ reply: text });

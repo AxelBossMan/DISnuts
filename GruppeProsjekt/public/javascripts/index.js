@@ -1,7 +1,6 @@
 
-const config = require('../database/sqlconfig');         
-const { createDatabaseConnection } = require('../database/database'); 
 
+// HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 
 if (selectedEventRaw) {
@@ -19,7 +18,9 @@ if (selectedEventRaw) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+
+
+document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#wordTable tbody");
   const addBtn = document.getElementById("addRowBtn");
   const sendBtn = document.getElementById("sendSMSBtn");
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
   //const returnEvent = document.getElementById("return");
+  const generateBtn = document.getElementById("generate");
 
   
   // global payload som både preview og send kan bruke
@@ -35,6 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // iPhone-preview
   function buildPreview() {
     const intro = introInput.value.trim();
+
+    // Auto-resize the textarea to fit content
+    try {
+      introInput.style.height = 'auto';
+      introInput.style.height = introInput.scrollHeight + 'px';
+    } catch (e) {
+      // ignore if introInput is not a textarea or style can't be set
+    }
     const rows = document.querySelectorAll("#wordTable tbody tr");
 
     let html = "";
@@ -132,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
     subtract.style.borderRadius = "5px";
-
+    
     subtract.addEventListener("click", () => {
       row.remove();
       buildPreview();
@@ -148,6 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     wordInput.focus();
 
     buildPreview();
+    
   }
 
   // events
@@ -206,35 +217,62 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 
-  // første preview
-  buildPreview();
-});
-
-document.getElementById("return").addEventListener("click", () => {
-  window.location.href = "/events";
-});
-
-
-//skal integrere openai under sånn at info blir generert automatisk. Hent infromasjon fra SQL databasen om valgt event og generer intro tekst automatisk.
-document.addEventListener("DOMContentLoaded", async () => {
-  const db = await createDatabaseConnection(config);
-  event_id = localStorage.getItem("selectedEventId");
-  
-  const eventinfo = await db.getInfoEvent(event_id);
-  console.log("eventinfo", eventinfo)
+  const { event_id, event_description, event_name, event_location, event_time } = JSON.parse(selectedEventRaw);
 
    async function askChatGPT(prompt) {
-    const res = await fetch('/api/chat', {
+    const res = await fetch('/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
   });
 
   const data = await res.json();
-  console.log('Svar fra ChatGPT:', data.reply);
-  return data.reply;
+  // console.log('Svar fra ChatGPT:', data.reply);
+  return data.reply; 
 }
 
-  let intro = askChatGPT(`Lag en kort og fengende introduksjonstekst for en SMS-kampanje som inviterer folk til å delta på et lokalt arrangement. Teksten skal være vennlig og oppfordre mottakeren til å svare med et nøkkelord for mer informasjon. Hold det under 200 tegn.`)
-  introInput.innerHTML = intro
+  generateBtn.addEventListener("click", async () => {
+    // show skeleton loader on intro input while generating
+    try {
+      introInput.classList.add('skeleton');
+      introInput.disabled = true;
+      introInput.dataset._prevPlaceholder = introInput.placeholder || '';
+      introInput.placeholder = 'Generating...';
+
+      let intro = await askChatGPT(`
+    Create a short and engaging reminder SMS message about an upcoming local event. 
+    Use the following event information exactly as provided:
+    Event name: ${event_name}
+    Description: ${event_description}
+    Location: ${event_location}
+    Time: ${event_time}
+
+    Requirements:
+    - Write in English
+    - Maximum length: 400 characters
+    - Must reference ALL the given event information
+    - Friendly and inviting tone or match the event description tone
+    `)
+  
+      // apply intro into textarea and trigger preview
+      // console.log("intro: ", intro)
+      introInput.value = intro || '';
+      introInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } catch (err) {
+      console.error('Error generating intro:', err);
+    } finally {
+      // remove loader and re-enable input
+      introInput.classList.remove('skeleton');
+      introInput.disabled = false;
+      introInput.placeholder = introInput.dataset._prevPlaceholder || '';
+    }
+  });
+  // første preview
+  buildPreview();
+
+
+});
+
+document.getElementById("return").addEventListener("click", () => {
+  window.location.href = "/events";
 });

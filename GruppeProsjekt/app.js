@@ -55,7 +55,7 @@ app.use('/api/events', eventsRouter); // VIKTIG: nå får du GET /api/events
 app.use('/authenticator', authRouter);
 
 // chat router
-app.use('/api/chat', chatRouter);
+app.use('/chat', chatRouter);
 
 // error handler
 app.use((err, req, res, next) => {
