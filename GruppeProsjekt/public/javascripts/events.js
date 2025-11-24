@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const ev = events[index]; 
           localStorage.setItem("selectedEvent", JSON.stringify(ev));
           localStorage.setItem("selectedEventId", ev.id);
-
+            console.log(ev.id)
           window.location.href = "/";
         });
       });
