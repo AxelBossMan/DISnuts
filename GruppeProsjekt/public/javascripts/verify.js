@@ -17,6 +17,8 @@ document.getElementById("verifyForm").onsubmit = async (e) => {
   alert(json.message);
 
   if (json.success) {
-    window.location.href = "/index.html";
+    setTimeout(() => {
+        window.location.href = "/index.html";
+    }, 200);
   }
 };
