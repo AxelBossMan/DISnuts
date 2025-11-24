@@ -1,6 +1,6 @@
-// HENT VALGT EVENT FRA localStorage
-const config = require('../database/sqlconfig');           // din config-fil
-const { createDatabaseConnection } = require('../database/database'); // din database.js
+
+const config = require('../database/sqlconfig');         
+const { createDatabaseConnection } = require('../database/database'); 
 
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 
@@ -8,23 +8,16 @@ if (selectedEventRaw) {
   try {
     const selectedEvent = JSON.parse(selectedEventRaw);
 
-    // vis event-navn et sted i UI
     const label = document.getElementById("selected-event-label");
     if (label && selectedEvent.event_name) {
       label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
     }
 
-    // hvis du vil, kan du også bruke selectedEvent videre i koden her:
-    // - preutfylle intro-tekst
-    // - lagre event_id når du sender SMS-oppsett til backend
-    // osv.
 
   } catch (e) {
     console.error("Could not parse selectedEvent from localStorage", e);
   }
 }
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.querySelector("#wordTable tbody");
@@ -138,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
     subtract.style.marginLeft = "5px";
     subtract.style.backgroundColor = "rgb(255,182,193)";
     subtract.style.cursor = "pointer";
+    subtract.style.borderRadius = "5px";
 
     subtract.addEventListener("click", () => {
       row.remove();
