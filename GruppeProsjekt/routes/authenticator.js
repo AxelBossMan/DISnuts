@@ -8,19 +8,19 @@ const nodemailer = require("nodemailer");
 // ----------------------
 router.post("/register", async (req, res) => {
     const db = req.app.locals.db;
-    const { name, email, phone_number, company_id, password } = req.body;
+    const { company_name, email, phone_number, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!company_name || !email || !password) {
         return res.status(400).json({ success: false, error: "Missing fields" });
     }
 
     try {
         await db.create(
-            { name, email, phone_number, company_id, password },
-            "users"
+            { company_name, email, phone_number, password },
+            "company"
         );
 
-        res.json({ success: true, message: "User registered" });
+        res.json({ success: true, message: "Company registered" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: err.message });
@@ -35,10 +35,11 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const users = await db.readAll("users");
-        const user = users.find(u => u.email === email && u.password === password);
+        const companies = await db.readAll("company");
+        // Finn selskap med matching e-post og passord
+        const company = companies.find(c => c.email === email && c.password === password);
 
-        if (!user) {
+        if (!company) {
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
 
