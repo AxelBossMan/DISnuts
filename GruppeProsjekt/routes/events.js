@@ -4,7 +4,7 @@ const db = require("../database/sql");
 
 router.get("/", async (req, res) => {
   try {
-    const events = await db.readAll("event");  // TABELLNAVN STEMMER
+    const events = await db.readAll("event");  
 
     res.json(events);
   } catch (err) {
