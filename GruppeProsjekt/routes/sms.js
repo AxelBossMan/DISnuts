@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
 
 const config = require("../database/sqlconfig");
 const { createDatabaseConnection } = require("../database/database");
@@ -154,6 +156,15 @@ router.post("/incoming",
 
       const key = incomingBody.toUpperCase();
 
+      const db = await createDatabaseConnection(config);
+            // sett inn db her 
+      await db.create({
+        message: incomingBody,
+        from_number: from,
+        matched_word: key, 
+      }, 
+      "message_log"
+    )
       if (lastPairs && lastPairs[key]) {
         let reply = `Keyword ${key}:\n${lastPairs[key]}`;
 

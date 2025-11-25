@@ -115,9 +115,10 @@
   }
   
   .bottom-actions {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     justify-content: flex-start;
+    flex-direction: column;
   }
   
   .ghost-button {
