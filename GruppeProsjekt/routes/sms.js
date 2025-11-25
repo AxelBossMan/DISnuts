@@ -102,12 +102,7 @@ router.post("/send", async (req, res) => {
     );
 
     // Hent alle deltakere
-    const recipients = await db.query(`
-      SELECT u.user_id, u.phone_number
-      FROM event_users eu
-      JOIN users u ON eu.user_id = u.user_id
-      WHERE eu.event_id = ${event_id}
-    `);
+    const recipients = await db.getRecipientsForEvent(event_id);
 
     if (!recipients || recipients.length === 0) {
       return res.json({
