@@ -5,6 +5,11 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
+const { createDatabaseConnection } = require("../database/database")
+const config = require("../database/sqlconfig");
+
+let db = require("../database/sql");
+
 
 const loginLimiter = rateLimit({
     windowMs: 1* 10 * 1000, // 10 seconds
@@ -16,6 +21,7 @@ const loginLimiter = rateLimit({
         error: 'Too many requests, please try again in 3 minutes.'
     }
 })
+    
 // REGISTER
 // ----------------------
 router.post("/register",
@@ -88,7 +94,7 @@ router.post("/login", loginLimiter,
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const db = req.app.locals.db;
+    // const db = req.app.locals.db;
     const { email, password } = req.body;
 
     try {
@@ -121,7 +127,7 @@ router.post("/login", loginLimiter,
 
 // VERIFY 2FA CODE
 // ----------------------
-router.post("/verify", (req, res) => {
+router.post("/verify", async (req, res) => {
     const { email, code } = req.body;
 
     const codes = req.app.locals.twoFactorCodes;
@@ -138,6 +144,15 @@ router.post("/verify", (req, res) => {
         path: "/",             // cookie gjelder for hele siden
         maxAge: 1000 * 60 * 60 // 1 time
     });
+
+    const id = await db.getIdFromMail(email);
+
+    req.session.user = req.session.user = {
+    id: id,
+    name: email,
+    role: 'admin'
+  };
+    
     res.json({ success: true, message: "Login successful!" });
 });
 
