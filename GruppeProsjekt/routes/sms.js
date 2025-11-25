@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
 
 const config = require("../database/sqlconfig");
 const { createDatabaseConnection } = require("../database/database");
@@ -53,48 +55,49 @@ router.post("/send", async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing event_id" });
     }
 
-    // Hent event fra DB
-    const rows = await db.query(`
-      SELECT * FROM event WHERE event_id = ${event_id}
-    `);
-    if (!rows || rows.length === 0) {
+    const event = await db.readOneEvent(event_id);
+    if (!event) {
       return res.status(404).json({ success: false, error: "Event not found" });
     }
-    const event = rows[0];
 
-    // Lag meldingen som skal sendes
-    let smsBody = intro || "";
-    const words = Object.keys(keywords || {});
-    if (words.length > 0) {
-      smsBody += "\n\nAvailable keywords:\n";
-      words.forEach(w => { smsBody += `• ${w}\n`; });
-    }
-
-    // Tidspunkt
     const eventTime = new Date(event.time);
-    if (isNaN(eventTime)) {
-      return res.status(500).json({ success: false, error: "Invalid event time in database" });
+
+    // SEND NOW
+    if (schedule === "now") {
+      const sms = await client.messages.create({
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: process.env.TWILIO_PHONE_RECIPIENT,
+        body: intro
+      });
+
+      return res.json({
+        success: true,
+        type: "sent_now",
+        sid: sms.sid,
+        message: "Message sent instantly"
+      });
     }
 
+    // SCHEDULE LATER
     let sendTime;
-    if (schedule === "now") {
-      sendTime = new Date();
-    } else if (schedule === "1h") {
+
+    if (schedule === "1h") {
       sendTime = new Date(eventTime - 1000 * 60 * 60);
     } else if (schedule === "12h") {
       sendTime = new Date(eventTime - 1000 * 60 * 60 * 12);
     } else if (schedule === "24h") {
       sendTime = new Date(eventTime - 1000 * 60 * 60 * 24);
     } else {
+      // custom datetime
       sendTime = new Date(schedule);
     }
 
-    // Lagre i scheduled_messages
+    // lagre jobben i DB
     await db.create(
       {
         event_id,
         intro,
-        keywords: JSON.stringify(keywords),
+        keywords: JSON.stringify(keywords || {}),
         send_time: sendTime.toISOString(),
         status: "scheduled"
       },
@@ -132,17 +135,15 @@ router.post("/send", async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Message scheduled",
-      sentNow: sent.length,
-      details: sent
+      type: "scheduled",
+      message: "Message scheduled"
     });
 
   } catch (err) {
-    console.error("[sms.js] /send error:", err);
+    console.error("SEND ERROR:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
-
 /*
   INCOMING SMS / KEYWORD HANDLING
 */
@@ -158,6 +159,15 @@ router.post("/incoming",
 
       const key = incomingBody.toUpperCase();
 
+      const db = await createDatabaseConnection(config);
+            // sett inn db her 
+      await db.create({
+        message: incomingBody,
+        from_number: from,
+        matched_word: key, 
+      }, 
+      "message_log"
+    )
       if (lastPairs && lastPairs[key]) {
         let reply = `Keyword ${key}:\n${lastPairs[key]}`;
 

@@ -30,6 +30,11 @@ async function createDatabaseConnection(config) {
         query: async (sqlText) => {
             const result = await pool.request().query(sqlText);
             return result.recordset;
+        },
+        readOneEvent: async (id) => {
+            const result = await pool.request()
+                .query(`SELECT * FROM event WHERE event_id = ${id}`);
+            return result.recordset[0];
         }
     };
 }
