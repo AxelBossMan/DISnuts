@@ -5,8 +5,6 @@ require("dotenv").config();
 const config = require('../database/sqlconfig');       
 const { createDatabaseConnection } = require('../database/database'); 
 
-const config = require("../database/sqlconfig");
-const { createDatabaseConnection } = require("../database/database");
 
 // Sett opp db-tilkobling
 // Bruker SQL-klassen (ikke database.js lenger)
