@@ -19,7 +19,7 @@ const loginLimiter = rateLimit({
 // REGISTER
 // ----------------------
 router.post("/register",
-    // express validator
+    // express validator - sjekker gyldigheten på det skrevet inn
     [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
     body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer")
     ],
@@ -76,8 +76,8 @@ router.post("/login", loginLimiter,
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
 
-        // Lag 2FA-kode
-        const code = crypto.randomInt(100000, 999999).toString();
+        // Lag 2FA-kode 
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Lagre midlertidig
         // req.app.locals brukes for enkel lagring uten database
