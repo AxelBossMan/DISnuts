@@ -29,7 +29,7 @@ class Database {
     const pool = await this.connect();
     const result = await pool.request()
       .input('event_id', sql.Int, event_id)
-      .query('SELECT * FROM dbo.events WHERE event_id = @event_id');
+      .query('SELECT * FROM dbo.event WHERE event_id = @event_id');
     return result.recordset;
   }
 
@@ -87,8 +87,15 @@ class Database {
         WHERE company_id = @company_id
       `);
   
-    return result.recordset[0] || null;
+    return result.recordset[0] || null;}
+  async getIdFromMail(email) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("email", sql.VarChar, email)
+      .query("SELECT company_id FROM dbo.company WHERE email = @email");
+    // console.log("GETIDFROMMAIL", result);
+    return result.recordset[0] ? result.recordset[0].company_id : null;
   }
 }
 
-module.exports = new Database();
+module.exports = new Database;
