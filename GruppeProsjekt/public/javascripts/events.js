@@ -16,7 +16,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         grid.innerHTML += `
           <div class="event-card" data-event-id="${ev.event_id}">
             <div class="event-title">${ev.event_name}</div>
-            <div class="event-meta">${ev.location} · ${new Date(ev.time).toLocaleDateString()}</div>
+            <div class="event-meta">${ev.location} · ${new Date(ev.time).toLocaleString("no-NO", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit"
+            })}</div>
             <div class="event-footer">
               <button class="event-button manage-event" type="button">
                 Manage
