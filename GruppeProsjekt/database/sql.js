@@ -4,7 +4,7 @@ const config = require("./sqlconfig");
 class Database {
   constructor() {
     this.pool = null;
-  }
+}
 
   async connect() {
     if (!this.pool) {
