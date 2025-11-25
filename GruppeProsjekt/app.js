@@ -43,6 +43,15 @@ let db;
 // statiske filer (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/login.html"));
+});
+
+// register-side
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/register.html"));
+});
+
 // sider
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
