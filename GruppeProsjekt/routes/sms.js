@@ -60,16 +60,22 @@ router.post("/send", async (req, res) => {
     if (!rows || rows.length === 0) {
       return res.status(404).json({ success: false, error: "Event not found" });
     }
-    // Velg første event (hvis flere)
     const event = rows[0];
 
-    // Hent tidspunkt
+    // Lag meldingen som skal sendes
+    let smsBody = intro || "";
+    const words = Object.keys(keywords || {});
+    if (words.length > 0) {
+      smsBody += "\n\nAvailable keywords:\n";
+      words.forEach(w => { smsBody += `• ${w}\n`; });
+    }
+
+    // Tidspunkt
     const eventTime = new Date(event.time);
     if (isNaN(eventTime)) {
       return res.status(500).json({ success: false, error: "Invalid event time in database" });
     }
 
-    // Beregn sendetid basert på schedule man velger
     let sendTime;
     if (schedule === "now") {
       sendTime = new Date();
@@ -83,7 +89,7 @@ router.post("/send", async (req, res) => {
       sendTime = new Date(schedule);
     }
 
-    // Lagre jobben i sheduled_messages tabellen
+    // Lagre i scheduled_messages
     await db.create(
       {
         event_id,
@@ -95,7 +101,46 @@ router.post("/send", async (req, res) => {
       "scheduled_messages"
     );
 
-    res.json({ success: true, message: "Message scheduled" });
+    // Hent alle deltakere
+    const recipients = await db.query(`
+      SELECT u.user_id, u.phone_number
+      FROM event_users eu
+      JOIN users u ON eu.user_id = u.user_id
+      WHERE eu.event_id = ${event_id}
+    `);
+
+    if (!recipients || recipients.length === 0) {
+      return res.json({
+        success: true,
+        message: "Message scheduled, but no recipients",
+        scheduled: true,
+        sentTo: 0
+      });
+    }
+
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+    const sent = [];
+
+    if (schedule === "now") {
+      for (const r of recipients) {
+        if (!r.phone_number) continue;
+
+        const msg = await client.messages.create({
+          from: fromNumber,
+          to: r.phone_number,
+          body: smsBody
+        });
+
+        sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: "Message scheduled",
+      sentNow: sent.length,
+      details: sent
+    });
 
   } catch (err) {
     console.error("[sms.js] /send error:", err);
