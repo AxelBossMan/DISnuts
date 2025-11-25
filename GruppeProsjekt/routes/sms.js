@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
-const config = require('../database/sqlconfig');       
-const { createDatabaseConnection } = require('../database/database'); 
+//const config = require('../database/sqlconfig');       
+//const { createDatabaseConnection } = require('../database/database'); 
 
 
 // Sett opp db-tilkobling
 // Bruker SQL-klassen (ikke database.js lenger)
 const db = require("../database/sql");
+const { some } = require("async");
 
 // Sett opp Twilio-klient
 const client = twilio(
@@ -143,8 +144,9 @@ router.post("/send", async (req, res) => {
   INCOMING SMS / KEYWORD HANDLING
 */
 router.post("/incoming",
-  express.json(),
   express.urlencoded({ extended: true }),
+  express.json(),
+
   async (req, res) => {
     try {
       const incomingBody = (req.body.Body || req.body.body || "").toString().trim();
@@ -154,15 +156,14 @@ router.post("/incoming",
 
       const key = incomingBody.toUpperCase();
 
-      const db = await createDatabaseConnection(config);
-            // sett inn db her 
+      // sett inn db her 
       await db.create({
         message: incomingBody,
         from_number: from,
-        matched_word: key, 
-      }, 
-      "message_log"
-    )
+        matched_word: key,
+        event_id: 4
+      }, "message_log");
+
       if (lastPairs && lastPairs[key]) {
         let reply = `Keyword ${key}:\n${lastPairs[key]}`;
 

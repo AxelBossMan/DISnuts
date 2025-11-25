@@ -29,7 +29,7 @@ class Database {
     const pool = await this.connect();
     const result = await pool.request()
       .input('event_id', sql.Int, event_id)
-      .query('SELECT * FROM dbo.events WHERE event_id = @event_id');
+      .query('SELECT * FROM dbo.event WHERE event_id = @event_id');
     return result.recordset;
   }
 
