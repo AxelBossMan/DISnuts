@@ -45,6 +45,37 @@ class Database {
       `);
     return result.recordset;
   }
+  // CREATE, for å legge til  sceduling messages i databasen
+  async create(data, table) {
+    const pool = await this.connect();
+
+    const columns = Object.keys(data).join(", ");
+    const values = Object.values(data)
+      .map(value => `'${String(value).replace(/'/g, "''")}'`)
+      .join(", ");
+
+    const result = await pool.request()
+      .query(`INSERT INTO dbo.${table} (${columns}) VALUES (${values})`);
+
+    return result;
+  }
+
+  // RAW SQL (tidligere "query")
+  async query(sqlText) {
+    const pool = await this.connect();
+    const result = await pool.request().query(sqlText);
+    return result.recordset;
+  }
+
+  // readOneEvent fra database.js
+  async readOneEvent(id) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("event_id", sql.Int, id)
+      .query("SELECT * FROM dbo.event WHERE event_id = @event_id");
+
+    return result.recordset[0];
+  }
 }
 
 module.exports = new Database();

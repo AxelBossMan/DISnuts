@@ -27,20 +27,8 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(sessionMiddleware);
 
-// database-oppsett via createDatabaseConnection hvis du trenger det andre steder
-const { createDatabaseConnection } = require("./database/database");
-const sqlConfig = require("./database/sqlconfig");
-
-let db;
-(async () => {
-  try {
-    db = await createDatabaseConnection(sqlConfig);
-    app.locals.db = db;
-    console.log("Database connected (createDatabaseConnection)");
-  } catch (err) {
-    console.error("Database connection failed:", err);
-  }
-})();
+const db = require("./database/sql");
+app.locals.db = db;
 
 // statiske filer (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
