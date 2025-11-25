@@ -1,10 +1,10 @@
-// cron.js – sjekk hver time om meldinger skal sendes
-
+// cron.js – sjekk hver time om en melding skal sendes
 const cron = require("node-cron");
 const twilio = require("twilio");
 const { createDatabaseConnection } = require("./database/database");
 const config = require("./database/sqlconfig");
 
+// Sett opp Twilio-klient
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
@@ -12,44 +12,47 @@ const client = twilio(
 
 (async () => {
   const db = await createDatabaseConnection(config);
-  console.log("Cron running... DB connected");
 
-  // hver time på minutt 0
+  console.log("Cron: Database connected");
+
+  // Kjør hver time på minutt 0
   cron.schedule("0 * * * *", async () => {
-    console.log("Checking scheduled messages…");
+    console.log("Cron: Checking scheduled messages…");
 
-    const due = await db.readAll(`
-      (SELECT * FROM scheduled_messages
-       WHERE status='scheduled'
-       AND send_time <= GETDATE())
+    // Hent meldinger som skal sendes
+    const dueMessages = await db.readAll(`
+      SELECT * FROM scheduled_messages
+      WHERE status='scheduled'
+      AND send_time <= GETDATE()
     `);
 
-    if (due.length === 0) {
-      console.log("Nothing to send.");
+    if (dueMessages.length === 0) {
+      console.log("Cron: No messages to send this hour.");
       return;
     }
 
-    for (let msg of due) {
+    for (let msg of dueMessages) {
       try {
-        // SEND SMS HER
+        // Send SMS
         await client.messages.create({
           from: process.env.TWILIO_PHONE_NUMBER,
           to: process.env.TWILIO_PHONE_RECIPIENT,
           body: msg.intro
         });
 
-        // oppdater status
+        // Sett melding som sendt
         await db.query(`
           UPDATE scheduled_messages
-          SET status='sent'
-          WHERE id=${msg.id}
+          SET status = 'sent'
+          WHERE id = ${msg.id}
         `);
 
-        console.log("Sent message:", msg.id);
+        console.log("Cron: Message sent:", msg.id);
 
       } catch (err) {
-        console.error("Error sending message:", err.message);
+        console.error("Cron: Error sending message:", err.message);
 
+        // Oppdater status til error
         await db.query(`
           UPDATE scheduled_messages
           SET status='error'

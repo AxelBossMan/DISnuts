@@ -184,17 +184,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Send-knappen
   sendBtn.addEventListener("click", async () => {
-    // Sett schedule inn i payload
-    if (scheduleSelect.value === "custom") {
-      payload.schedule = customSchedule.value; // yyyy-mm-ddThh:mm
-    } else {
-      payload.schedule = scheduleSelect.value; // "now", "1h", "12h", etc.
-    }
-    // legg til event_id på send knappen
-    payload.event_id = JSON.parse(localStorage.getItem("selectedEvent")).event_id;
-    console.log("Sending payload:", payload);
-
-    // sender payload objekt til backend sms.js som bruker til å pushe dette inn i databasen
     const response = await fetch("/api/send", {
       method: "POST",
       headers: {
