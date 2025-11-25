@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
-const config = require('../database/sqlconfig');       
-const { createDatabaseConnection } = require('../database/database'); 
 
 
 // Sett opp db-tilkobling
 // Bruker SQL-klassen (ikke database.js lenger)
 const db = require("../database/sql");
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
 
 // Sett opp Twilio-klient
 const client = twilio(

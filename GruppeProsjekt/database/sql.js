@@ -76,6 +76,15 @@ class Database {
 
     return result.recordset[0];
   }
+
+  async getIdFromMail(email) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("email", sql.VarChar, email)
+      .query("SELECT company_id FROM dbo.company WHERE email = @email");
+    // console.log("GETIDFROMMAIL", result);
+    return result.recordset[0] ? result.recordset[0].company_id : null;
+  }
 }
 
 module.exports = new Database();

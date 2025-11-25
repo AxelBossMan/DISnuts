@@ -6,6 +6,11 @@ const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 
+
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
+const testdb = require("../database/sql");
+
 const loginLimiter = rateLimit({
     windowMs: 1* 10 * 1000, // 10 seconds
     limit: 3, // limit each IP to 100 requests per windowMs
@@ -97,7 +102,7 @@ router.post("/login", loginLimiter,
 
 // VERIFY 2FA CODE
 // ----------------------
-router.post("/verify", (req, res) => {
+router.post("/verify", async (req, res) => {
     const { email, code } = req.body;
 
     const codes = req.app.locals.twoFactorCodes;
@@ -114,6 +119,15 @@ router.post("/verify", (req, res) => {
         path: "/",             // cookie gjelder for hele siden
         maxAge: 1000 * 60 * 60 // 1 time
     });
+
+    const id = await testdb.getIdFromMail(email);
+
+    req.session.user = req.session.user = {
+    id: id,
+    name: email,
+    role: 'admin'
+  };
+    
     res.json({ success: true, message: "Login successful!" });
 });
 
