@@ -5,6 +5,18 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
+const { createDatabaseConnection } = require("../database/database")
+const config = require("../database/sqlconfig");
+
+let db; 
+(async () => {
+  try {
+    db = await createDatabaseConnection(config);
+    console.log("[authenticator] Database connected");
+  } catch (err) {
+    console.error("Database connection failed:", err);
+  }
+})();
 
 
 const config = require('../database/sqlconfig');       
@@ -35,7 +47,7 @@ router.post("/register",
       return res.status(400).json({ success: false, message: errors.array()[0].msg });
     }
     // database connection 
-    const db = req.app.locals.db;
+    // const db = req.app.locals.db;
     const { company_name, email, phone_number, password } = req.body;
 
     /*
@@ -69,7 +81,7 @@ router.post("/login", loginLimiter,
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const db = req.app.locals.db;
+    // const db = req.app.locals.db;
     const { email, password } = req.body;
 
     try {
