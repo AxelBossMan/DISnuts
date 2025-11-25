@@ -30,7 +30,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   //const returnEvent = document.getElementById("return");
   const generateBtn = document.getElementById("generate");
 
-  
+  const scheduleSelect = document.getElementById("scheduleSelect");
+  const customSchedule = document.getElementById("customSchedule");
+
+    // Hvis bruker velger "custom" → vis datetime-input
+    scheduleSelect.addEventListener("change", () => {
+      if (scheduleSelect.value === "custom") {
+        customSchedule.style.display = "block";
+      } else {
+        customSchedule.style.display = "none";
+      }
+    });
   // global payload som både preview og send kan bruke
   let payload = { intro: "", keywords: {} };
 
@@ -75,10 +85,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-
+    // payload objektet med melding + keyworrs å sceduling tid
     payload = {
       intro,
       keywords: pairs,
+      schedule: null,
     };
 
     console.log("payload:", payload);
