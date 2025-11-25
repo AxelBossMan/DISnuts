@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
 
 
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
+
 
 // In-memory storage for siste sendte pairs (WORD -> answer)
 // Frontend sender payload.keywords som et objekt: {WORD: answer}
@@ -61,9 +64,17 @@ router.post("/incoming",
 
       console.log("[sms.js] POST /api/incoming from:", from);
       console.log("[sms.js] POST /api/incoming body:", incomingBody);
-
       const key = incomingBody.toUpperCase();
 
+      const db = await createDatabaseConnection(config);
+            // sett inn db her 
+      await db.create({
+        message: incomingBody,
+        from_number: from,
+        matched_word: key, 
+      }, 
+      "message_log"
+    )
       if (lastPairs && lastPairs[key]) {
         let reply = lastPairs[key];
         console.log(`[sms.js] Matched '${key}' -> replying with:`, reply);
