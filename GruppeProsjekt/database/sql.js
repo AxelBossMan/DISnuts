@@ -76,6 +76,19 @@ class Database {
 
     return result.recordset[0];
   }
+
+  async getCompanyById(company_id) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("company_id", sql.Int, company_id)
+      .query(`
+        SELECT company_id, company_name
+        FROM dbo.company
+        WHERE company_id = @company_id
+      `);
+  
+    return result.recordset[0] || null;
+  }
 }
 
 module.exports = new Database();
