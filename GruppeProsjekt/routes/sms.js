@@ -46,50 +46,39 @@ router.post("/send", async (req, res) => {
   }
 });
 
-// Enkel endpoint for å sjekke hvilke meldinger som kommer fra bruker
-// Mountes på /api/incoming (fordi router er mountet i app.js på /api)
+/*
+  INCOMING SMS / KEYWORD HANDLING
+*/
 router.post("/incoming",
-  // Støtte for både JSON og urlencoded (Twilio kan poste urlencoded)
   express.json(),
   express.urlencoded({ extended: true }),
-
   async (req, res) => {
     try {
-      // Twilio/WhatsApp sender meldingen i 'Body' og avsender i 'From'
       const incomingBody = (req.body.Body || req.body.body || "").toString().trim();
       const from = req.body.From || req.body.from || "unknown";
 
-      console.log("[sms.js] POST /api/incoming from:", from);
-      console.log("[sms.js] POST /api/incoming body:", incomingBody);
+      console.log("[sms.js] Incoming:", incomingBody);
 
       const key = incomingBody.toUpperCase();
 
       if (lastPairs && lastPairs[key]) {
-        let reply = lastPairs[key];
-        console.log(`[sms.js] Matched '${key}' -> replying with:`, reply);
-        reply =`Keyword ${key}:` + `\n` + reply
+        let reply = `Keyword ${key}:\n${lastPairs[key]}`;
 
-        try {
-          const msg = await client.messages.create({
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: from,
-            body: reply
-          });
+        const msg = await client.messages.create({
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: from,
+          body: reply
+        });
 
-          console.log("[sms.js] Reply sent, sid:", msg.sid);
-          return res.json({ success: true, matched: key, sid: msg.sid });
-        } catch (sendErr) {
-          console.error("[sms.js] Error sending reply:", sendErr.message);
-          return res.status(500).json({ success: false, error: sendErr.message });
-        }
+        return res.json({ success: true, matched: key, sid: msg.sid });
       }
 
-      console.log("[sms.js] No matching keyword for incoming message.");
-      return res.json({ success: true, matched: false, received: req.body });
+      return res.json({ success: true, matched: false });
+
     } catch (err) {
-      console.error("[sms.js] Error handling incoming:", err);
+      console.error("[sms.js] Incoming error:", err);
       return res.status(500).json({ success: false, error: err.message });
-    }  
+    }
   }
 );
 

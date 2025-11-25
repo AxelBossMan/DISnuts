@@ -23,6 +23,27 @@
           id="messageInput"
           placeholder="Type intro here"
         ></textarea>
+
+         <!-- Schedule message -->
+         <label for="scheduleSelect" style="display:block; margin-top: 18px; font-weight: 500;">
+          When should the message be sent?
+        </label>
+        
+        <select id="scheduleSelect" class="inputField" style="padding:10px; width: 200px;">
+          <option value="now">Send now</option>
+          <option value="1h">1 hour before event</option>
+          <option value="12h">12 hours before event</option>
+          <option value="24h">24 hours before event</option>
+          <option value="custom">Choose specific time</option>
+        </select>
+        
+        <input 
+          type="datetime-local" 
+          id="customSchedule" 
+          style="margin-top:10px; display:none; padding:10px; width:250px;"
+        >
+        <!-- ------------------------------------ -->
+         
         <p>Select which operating words you want and the answers</p>
       </div>
 
@@ -47,6 +68,10 @@
         </button>
         <button id="sendSMSBtn" type="button">
           Send
+        </button>
+       
+        <button id="return" type="button">
+          Return
         </button>
         <button id="saveSMSBtn" type="button">
           Save
