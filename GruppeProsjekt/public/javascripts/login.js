@@ -5,7 +5,6 @@ const createAccountBtn = document.getElementById("createAccountBtn");
 loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    // Tøm feilmelding hvis den finnes fra før
     errorMsg.style.display = "none";
     errorMsg.textContent = "";
 
@@ -25,7 +24,6 @@ loginForm.addEventListener("submit", async function (event) {
 
     const result = await response.json();
 
-    // Hvis feil login → vis feilmelding
     if (!result.success) {
         const msg = result.message ||result.error || "Login failed.";
         errorMsg.textContent = msg;
@@ -33,11 +31,9 @@ loginForm.addEventListener("submit", async function (event) {
         return;
     }
 
-    // Hvis login OK → gå videre til verify
     window.location.href = "/verify.html?email=" + encodeURIComponent(email);
 });
 
-// Knapp for å gå til register-siden
 createAccountBtn.addEventListener("click", function () {
-    window.location.href = "/register.html";
+    window.location.href = "/register";
 });

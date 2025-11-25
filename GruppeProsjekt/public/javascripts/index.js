@@ -2,16 +2,19 @@
 
 // HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
+let currentEventId = null;
 
 if (selectedEventRaw) {
   try {
     const selectedEvent = JSON.parse(selectedEventRaw);
 
+    // 👇 DEN VIKTIGE LINJEN
+    currentEventId = selectedEvent.event_id;
+
     const label = document.getElementById("selected-event-label");
     if (label && selectedEvent.event_name) {
       label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
     }
-
 
   } catch (e) {
     console.error("Could not parse selectedEvent from localStorage", e);
@@ -30,7 +33,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   //const returnEvent = document.getElementById("return");
   const generateBtn = document.getElementById("generate");
 
-  
+  const scheduleSelect = document.getElementById("scheduleSelect");
+  const customSchedule = document.getElementById("customSchedule");
+
+    // Hvis bruker velger "custom" → vis datetime-input
+    scheduleSelect.addEventListener("change", () => {
+      if (scheduleSelect.value === "custom") {
+        customSchedule.style.display = "block";
+      } else {
+        customSchedule.style.display = "none";
+      }
+    });
   // global payload som både preview og send kan bruke
   let payload = { intro: "", keywords: {} };
 
@@ -75,13 +88,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
-
+    // payload objektet med melding + keyworrs å sceduling tid
     payload = {
       intro,
       keywords: pairs,
+      schedule: null,
     };
 
-    console.log("payload:", payload);
+    // console.log("payload:", payload);
 
     const words = Object.keys(pairs);
 
@@ -181,7 +195,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Send-knappen
+  // Send-knappen
   sendBtn.addEventListener("click", async () => {
+    // 1. legg inn schedule i payload
+    if (scheduleSelect.value === "custom") {
+      // bruker valgt dato/tid
+      payload.schedule = customSchedule.value;          // f.eks. "2025-11-24T14:00"
+    } else {
+      // "now", "1h", "12h", "24h"
+      payload.schedule = scheduleSelect.value;
+    }
+
+    // 2. legg inn event_id i payload (fra selectedEvent)
+    payload.event_id = currentEventId;
+
+    if (!payload.event_id) {
+      alert("Error: Missing event_id (no event selected)");
+      return;
+    }
+
+    console.log("Sending payload:", payload);
+
+    // 3. send til backend
     const response = await fetch("/api/send", {
       method: "POST",
       headers: {
@@ -193,7 +228,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const result = await response.json();
 
     if (result.success) {
-      alert("Message sent! SID: " + result.sid);
+      // nå scheduler vi bare, ikke sender direkte SMS
+      alert("Message scheduled!");
     } else {
       alert("Error: " + result.error);
     }

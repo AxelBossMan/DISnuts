@@ -31,6 +31,6 @@ form.addEventListener("submit", async function (event) {
 
     // Hvis alt gikk bra → videre til login
     if (result.success) {
-        window.location.href = "/login.html";
+        window.location.href = "/login";
     }
 });
