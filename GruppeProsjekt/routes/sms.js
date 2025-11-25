@@ -44,12 +44,12 @@ router.post("/save", async (req, res) => {
 */
 router.post("/send", async (req, res) => {
   try {
-    const { intro, keywords, schedule, event_id } = req.body;
+    const { intro, keywords, schedule, event_id } = req.body; 
 
     if (!event_id) {
       return res.status(400).json({ success: false, error: "Missing event_id" });
     }
-
+    // henter event data fra db
     const event = await db.readOneEvent(event_id); //
     if (!event) {
       return res.status(404).json({ success: false, error: "Event not found" });
