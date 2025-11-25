@@ -21,6 +21,7 @@ const loginLimiter = rateLimit({
         error: 'Too many requests, please try again in 3 minutes.'
     }
 })
+    
 // REGISTER
 // ----------------------
 router.post("/register",
