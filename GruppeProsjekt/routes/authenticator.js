@@ -30,7 +30,8 @@ router.post("/register",
       return res.status(400).json({ success: false, message: errors.array()[0].msg });
     }
     // database connection 
-    const db = req.app.locals.db;
+    //const db = req.app.locals.db;
+    const db = require("../database/sql");
     const { company_name, email, phone_number, password } = req.body;
 
     /*
@@ -39,6 +40,29 @@ router.post("/register",
     }
 */
     try {
+      
+        // sjekk om email finnes
+        const existingEmail = await db.raw(`
+            SELECT email FROM dbo.company WHERE email = '${email}'
+        `);
+        if (existingEmail.length > 0) {
+            return res.status(400).json({
+            success: false,
+            message: "Denne e-posten er allerede registrert"
+            });
+        }
+
+        //sjekk om telefon finnes
+        const existingPhone = await db.raw(`
+            SELECT phone_number FROM dbo.company WHERE phone_number = '${phone_number}'
+        `);
+
+        if (existingPhone.length > 0) {
+            return res.status(400).json({
+            success: false,
+            message: "Dette telefonnummeret er allerede registrert"
+            });
+        }
         await db.create(
             { company_name, email, phone_number, password },
             "company"
