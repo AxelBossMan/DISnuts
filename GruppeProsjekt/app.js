@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var helmet = require('helmet');
 var limiter = require('express-rate-limit'); 
+var sessionMiddleware = require('./config/session');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(helmet());
+app.use(sessionMiddleware);
 
 // database-oppsett via createDatabaseConnection hvis du trenger det andre steder
 const { createDatabaseConnection } = require("./database/database");
@@ -65,6 +67,7 @@ app.use('/authenticator', authRouter);
 
 // chat router
 app.use('/chat', chatRouter);
+
 
 // error handler
 app.use((err, req, res, next) => {

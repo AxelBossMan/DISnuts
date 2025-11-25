@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       schedule: null,
     };
 
-    console.log("payload:", payload);
+    // console.log("payload:", payload);
 
     const words = Object.keys(pairs);
 
