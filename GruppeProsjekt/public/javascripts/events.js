@@ -10,10 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   
       const events = await response.json();
   
-      // tøm grid
       grid.innerHTML = "";
-  
-      // bygg kort
+
       events.forEach(ev => {
         grid.innerHTML += `
           <div class="event-card" data-event-id="${ev.event_id}">
@@ -43,8 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error(err);
       grid.innerHTML = `<p style="color:red;">Could not load events from server.</p>`;
     }
-  
-    // return-knappen
+
     const returnBtn = document.getElementById("return");
     if (returnBtn) {
       returnBtn.addEventListener("click", () => {
