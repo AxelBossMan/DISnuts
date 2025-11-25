@@ -51,7 +51,7 @@ class Database {
 
     const columns = Object.keys(data).join(", ");
     const values = Object.values(data)
-      .map(value => `'${String(value).replace(/'/g, "''")}'`)
+      .map(value => `N'${String(value).replace(/'/g, "''")}'`) // denne håndterer apostrofer og emojiier i SQL
       .join(", ");
 
     const result = await pool.request()

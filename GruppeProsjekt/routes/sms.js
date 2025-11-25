@@ -44,48 +44,50 @@ router.post("/save", async (req, res) => {
 */
 router.post("/send", async (req, res) => {
   try {
-    const { intro, keywords, schedule, event_id } = req.body;
+    const { intro, keywords, schedule, event_id } = req.body; 
+
+    console.log("[/send] incoming payload:", { intro, keywords, schedule, event_id });
 
     if (!event_id) {
       return res.status(400).json({ success: false, error: "Missing event_id" });
     }
 
-    const event = await db.readOneEvent(event_id); //
+    const event = await db.readOneEvent(event_id);
     if (!event) {
       return res.status(404).json({ success: false, error: "Event not found" });
     }
 
     const eventTime = new Date(event.time);
+    console.log("[/send] event.time:", event.time, "->", eventTime);
 
-    // SEND NOW
-    if (schedule === "now") {
-      const sms = await client.messages.create({
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: process.env.TWILIO_PHONE_RECIPIENT,
-        body: intro
-      });
-
-      return res.json({
-        success: true,
-        type: "sent_now",
-        sid: sms.sid,
-        message: "Message sent instantly"
-      });
-    }
-
-    // SCHEDULE LATER
+    // ---- beregn sendTime på en SAFE måte ----
+    const sched = (schedule || "").toString().trim();  // normaliser
     let sendTime;
 
-    if (schedule === "1h") {
-      sendTime = new Date(eventTime - 1000 * 60 * 60);
-    } else if (schedule === "12h") {
-      sendTime = new Date(eventTime - 1000 * 60 * 60 * 12);
-    } else if (schedule === "24h") {
-      sendTime = new Date(eventTime - 1000 * 60 * 60 * 24);
+    if (sched === "now" || sched === "") {
+      // send nå -> registrer nåtid i scheduled_messages
+      sendTime = new Date();
+    } else if (sched === "1h") {
+      sendTime = new Date(eventTime.getTime() - 1000 * 60 * 60);
+    } else if (sched === "12h") {
+      sendTime = new Date(eventTime.getTime() - 1000 * 60 * 60 * 12);
+    } else if (sched === "24h") {
+      sendTime = new Date(eventTime.getTime() - 1000 * 60 * 60 * 24);
     } else {
-      // custom datetime
-      sendTime = new Date(schedule);
+      // custom verdi fra frontend – prøv å parse
+      sendTime = new Date(sched);
     }
+
+    // viktig: valider før toISOString()
+    if (!(sendTime instanceof Date) || isNaN(sendTime.getTime())) {
+      console.error("[/send] INVALID sendTime. schedule =", sched, "computed =", sendTime);
+      return res.status(400).json({
+        success: false,
+        error: "Invalid time value for schedule: " + sched
+      });
+    }
+
+    console.log("[/send] using sendTime:", sendTime.toISOString());
 
     // lagre jobben i DB
     await db.create(
@@ -101,6 +103,7 @@ router.post("/send", async (req, res) => {
 
     // Hent alle deltakere
     const recipients = await db.getRecipientsForEvent(event_id);
+    console.log("[/send] recipients:", recipients);
 
     if (!recipients || recipients.length === 0) {
       return res.json({
@@ -114,31 +117,55 @@ router.post("/send", async (req, res) => {
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
     const sent = [];
 
-    if (schedule === "now") {
-      for (const r of recipients) {
-        if (!r.phone_number) continue;
-
-        const msg = await client.messages.create({
-          from: fromNumber,
-          to: r.phone_number,
-          body: smsBody
-        });
-
-        sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
+    // BYGG meldingen vi faktisk skal sende: bruk bodyText (fra /save)
+    let smsBody = bodyText;
+    if (!smsBody || smsBody.trim() === "") {
+      // fallback hvis /save ikke har blitt kalt
+      smsBody = intro || "";
+      const words = Object.keys(keywords || {});
+      if (words.length > 0) {
+        smsBody += "\n\nAvailable keywords:\n";
+        words.forEach(w => { smsBody += `• ${w}\n`; });
       }
     }
 
+    if (sched === "now" || sched === "") {
+      // send med en gang
+      for (const r of recipients) {
+        if (!r.phone_number) continue;
+        
+        const msg = await client.messages.create({
+          from: fromNumber,
+          to: "whatsapp:"+r.phone_number,
+          body: smsBody
+        });
+        console.log(fromNumber, r.phone_number, msg)
+        sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
+      }
+
+      return res.json({
+        success: true,
+        type: "sent_now",
+        message: "Message sent instantly",
+        sentTo: sent.length,
+        details: sent
+      });
+    }
+
+    // ikke "now" → bare scheduled, ingen SMS sendt enda
     return res.json({
       success: true,
       type: "scheduled",
-      message: "Message scheduled"
+      message: "Message scheduled",
+      sendTime: sendTime.toISOString()
     });
 
   } catch (err) {
     console.error("SEND ERROR:", err);
-    res.status(500).json({ success: false, error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
+
 /*
   INCOMING SMS / KEYWORD HANDLING
 */
