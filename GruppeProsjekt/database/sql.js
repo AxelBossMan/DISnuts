@@ -51,7 +51,7 @@ class Database {
 
     const columns = Object.keys(data).join(", ");
     const values = Object.values(data)
-      .map(value => `'${String(value).replace(/'/g, "''")}'`)
+      .map(value => `N'${String(value).replace(/'/g, "''")}'`) // denne håndterer apostrofer og emojiier i SQL
       .join(", ");
 
     const result = await pool.request()
@@ -76,6 +76,15 @@ class Database {
 
     return result.recordset[0];
   }
+
+  async getIdFromMail(email) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("email", sql.VarChar, email)
+      .query("SELECT company_id FROM dbo.company WHERE email = @email");
+    // console.log("GETIDFROMMAIL", result);
+    return result.recordset[0] ? result.recordset[0].company_id : null;
+  }
 }
 
-module.exports = new Database();
+module.exports = new Database;

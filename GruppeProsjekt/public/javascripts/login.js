@@ -8,6 +8,7 @@ loginForm.addEventListener("submit", async function (event) {
     errorMsg.style.display = "none";
     errorMsg.textContent = "";
 
+    // Hent verdier fra skjemaet
     const email = loginForm.email.value;
     const password = loginForm.password.value;
 

@@ -5,6 +5,23 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
+const { createDatabaseConnection } = require("../database/database")
+const config = require("../database/sqlconfig");
+
+let db; 
+(async () => {
+  try {
+    db = await createDatabaseConnection(config);
+    console.log("[authenticator] Database connected");
+  } catch (err) {
+    console.error("Database connection failed:", err);
+  }
+})();
+
+
+const config = require('../database/sqlconfig');       
+const { createDatabaseConnection } = require('../database/database'); 
+const testdb = require("../database/sql");
 
 const loginLimiter = rateLimit({
     windowMs: 1* 10 * 1000, // 10 seconds
@@ -20,7 +37,7 @@ const loginLimiter = rateLimit({
 // REGISTER
 // ----------------------
 router.post("/register",
-    // express validator
+    // express validator - sjekker gyldigheten på det skrevet inn
     [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
     body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer")
     ],
@@ -31,7 +48,7 @@ router.post("/register",
       return res.status(400).json({ success: false, message: errors.array()[0].msg });
     }
     // database connection 
-    const db = req.app.locals.db;
+    // const db = req.app.locals.db;
     const { company_name, email, phone_number, password } = req.body;
 
     /*
@@ -65,7 +82,7 @@ router.post("/login", loginLimiter,
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const db = req.app.locals.db;
+    // const db = req.app.locals.db;
     const { email, password } = req.body;
 
     try {
@@ -77,8 +94,8 @@ router.post("/login", loginLimiter,
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
 
-        // Lag 2FA-kode
-        const code = crypto.randomInt(100000, 999999).toString();
+        // Lag 2FA-kode 
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Lagre midlertidig
         // req.app.locals brukes for enkel lagring uten database
@@ -98,7 +115,7 @@ router.post("/login", loginLimiter,
 
 // VERIFY 2FA CODE
 // ----------------------
-router.post("/verify", (req, res) => {
+router.post("/verify", async (req, res) => {
     const { email, code } = req.body;
 
     const codes = req.app.locals.twoFactorCodes;
@@ -115,6 +132,15 @@ router.post("/verify", (req, res) => {
         path: "/",             // cookie gjelder for hele siden
         maxAge: 1000 * 60 * 60 // 1 time
     });
+
+    const id = await testdb.getIdFromMail(email);
+
+    req.session.user = req.session.user = {
+    id: id,
+    name: email,
+    role: 'admin'
+  };
+    
     res.json({ success: true, message: "Login successful!" });
 });
 

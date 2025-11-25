@@ -3,13 +3,13 @@ const form = document.getElementById("registerForm");
 form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Stopper vanlig form-submission
 
-    // Henter verdier manuelt (tydeligere for studenter)
+    // Henter verdier fra skjemaet
     const companyName = form.company_name.value;
     const email = form.email.value;
     const phoneNumber = form.phone_number.value;
     const password = form.password.value;
 
-    // Lager et vanlig JS-objekt for å sende til backend
+    // Lager et vanlig objekt for å sende til backend
     const data = {
         company_name: companyName,
         email: email,

@@ -15,6 +15,7 @@ var smsRouter = require('./routes/sms');
 var eventsRouter = require('./routes/events');
 var authRouter = require('./routes/authenticator');
 var chatRouter= require('./routes/chat');
+var testRouter = require('./routes/test');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -26,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(helmet());
 app.use(sessionMiddleware);
+
+app.set('trust proxy', 1); 
 
 const db = require("./database/sql");
 app.locals.db = db;
@@ -56,6 +59,8 @@ app.use('/authenticator', authRouter);
 // chat router
 app.use('/chat', chatRouter);
 
+//test router
+app.use('/test', testRouter);
 
 // error handler
 app.use((err, req, res, next) => {

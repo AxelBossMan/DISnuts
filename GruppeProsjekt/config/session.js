@@ -11,7 +11,7 @@ const sessionMiddleware = session({
   cookie: {
     httpOnly: true,
     // only secure cookies over HTTPS in production
-    secure: true,
+    secure: false, //BYTT TIL TRUE I FINAL VERSION
     maxAge: 1000 * 60 * 60 // 1 time
   }
 });
