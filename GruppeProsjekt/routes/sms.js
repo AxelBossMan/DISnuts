@@ -121,7 +121,6 @@ router.post("/send", async (req, res) => {
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
     const sent = [];
 
-    // Send umiddelbart hvis schedule = now
     if (schedule === "now") {
       for (const r of recipients) {
         if (!r.phone_number) continue;
