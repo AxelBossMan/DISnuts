@@ -4,6 +4,18 @@ const router = express.Router();
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
+const rateLimit = require('express-rate-limit');
+
+const loginLimiter = rateLimit({
+    windowMs: 1* 10 * 1000, // 10 seconds
+    limit: 3, // limit each IP to 100 requests per windowMs
+    standardHeaders: 'draft-8', // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: {
+        success: false,
+        error: 'Too many requests, please try again in 3 minutes.'
+    }
+})
 // REGISTER
 // ----------------------
 router.post("/register",
@@ -42,7 +54,7 @@ router.post("/register",
 
 // LOGIN (sjekker passord og sender 2FA-kode)
 // ----------------------
-router.post("/login", 
+router.post("/login", loginLimiter,
     // express validator 
     [body("email").isEmail(), body("password").notEmpty().isLength({ min: 8 })],
     // check if valid and process login

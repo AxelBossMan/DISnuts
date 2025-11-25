@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const introInput = document.getElementById("messageInput");
   const phoneMessages = document.getElementById("phoneMessages");
   //const returnEvent = document.getElementById("return");
+  const generateBtn = document.getElementById("generate");
 
   const scheduleSelect = document.getElementById("scheduleSelect");
   const customSchedule = document.getElementById("customSchedule");
@@ -46,6 +47,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   // iPhone-preview
   function buildPreview() {
     const intro = introInput.value.trim();
+
+    // Auto-resize the textarea to fit content
+    try {
+      introInput.style.height = 'auto';
+      introInput.style.height = introInput.scrollHeight + 'px';
+    } catch (e) {
+      // ignore if introInput is not a textarea or style can't be set
+    }
     const rows = document.querySelectorAll("#wordTable tbody tr");
 
     let html = "";
@@ -233,7 +242,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   return data.reply; 
 }
 
-  let intro = await askChatGPT(`
+  generateBtn.addEventListener("click", async () => {
+    // show skeleton loader on intro input while generating
+    try {
+      introInput.classList.add('skeleton');
+      introInput.disabled = true;
+      introInput.dataset._prevPlaceholder = introInput.placeholder || '';
+      introInput.placeholder = 'Generating...';
+
+      let intro = await askChatGPT(`
     Create a short and engaging reminder SMS message about an upcoming local event. 
     Use the following event information exactly as provided:
     Event name: ${event_name}
@@ -248,9 +265,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     - Friendly and inviting tone or match the event description tone
     `)
   
-  console.log("intro: ", intro)
-  introInput.value = intro
-
+      // apply intro into textarea and trigger preview
+      // console.log("intro: ", intro)
+      introInput.value = intro || '';
+      introInput.dispatchEvent(new Event('input', { bubbles: true }));
+    } catch (err) {
+      console.error('Error generating intro:', err);
+    } finally {
+      // remove loader and re-enable input
+      introInput.classList.remove('skeleton');
+      introInput.disabled = false;
+      introInput.placeholder = introInput.dataset._prevPlaceholder || '';
+    }
+  });
   // første preview
   buildPreview();
 
