@@ -3,6 +3,8 @@ const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
 
+const db = require("../database/sql");
+
 
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
