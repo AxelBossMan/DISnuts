@@ -102,6 +102,35 @@ router.post("/send", async (req, res) => {
       "scheduled_messages"
     );
 
+    // Hent alle deltakere
+    const recipients = await db.getRecipientsForEvent(event_id);
+
+    if (!recipients || recipients.length === 0) {
+      return res.json({
+        success: true,
+        message: "Message scheduled, but no recipients",
+        scheduled: true,
+        sentTo: 0
+      });
+    }
+
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+    const sent = [];
+
+    if (schedule === "now") {
+      for (const r of recipients) {
+        if (!r.phone_number) continue;
+
+        const msg = await client.messages.create({
+          from: fromNumber,
+          to: r.phone_number,
+          body: smsBody
+        });
+
+        sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
+      }
+    }
+
     return res.json({
       success: true,
       type: "scheduled",

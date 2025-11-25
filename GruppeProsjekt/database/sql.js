@@ -32,6 +32,19 @@ class Database {
       .query('SELECT * FROM dbo.events WHERE event_id = @event_id');
     return result.recordset;
   }
+
+  async getRecipientsForEvent(event_id) {
+    const pool = await this.connect();
+    const result = await pool.request()
+      .input("event_id", sql.Int, event_id)
+      .query(`
+        SELECT u.user_id, u.phone_number
+        FROM dbo.event_users eu
+        JOIN dbo.users u ON eu.user_id = u.user_id
+        WHERE eu.event_id = @event_id
+      `);
+    return result.recordset;
+  }
 }
 
 module.exports = new Database();
