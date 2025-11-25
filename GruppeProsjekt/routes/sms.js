@@ -5,15 +5,10 @@ require("dotenv").config();
 const config = require('../database/sqlconfig');       
 const { createDatabaseConnection } = require('../database/database'); 
 
-const config = require("../database/sqlconfig");
-const { createDatabaseConnection } = require("../database/database");
 
 // Sett opp db-tilkobling
-let db;
-createDatabaseConnection(config).then(conn => {
-  db = conn;
-  console.log("[sms.js] Database connected");
-});
+// Bruker SQL-klassen (ikke database.js lenger)
+const db = require("../database/sql");
 
 // Sett opp Twilio-klient
 const client = twilio(
@@ -45,7 +40,7 @@ router.post("/save", async (req, res) => {
 });
 
 /*
-  SCHEDULE MESSAGE og sende til database tabellen
+  SCHEDULE MESSAGE og sende til database tabellen eller sende med en gang
 */
 router.post("/send", async (req, res) => {
   try {
@@ -55,7 +50,7 @@ router.post("/send", async (req, res) => {
       return res.status(400).json({ success: false, error: "Missing event_id" });
     }
 
-    const event = await db.readOneEvent(event_id);
+    const event = await db.readOneEvent(event_id); //
     if (!event) {
       return res.status(404).json({ success: false, error: "Event not found" });
     }
