@@ -3,7 +3,6 @@ const router = express.Router();
 
 //test router
 router.get('/', function(req, res, next) {
-    console.log("cookies", document.cookies)
   res.send(req.session);
 });
 

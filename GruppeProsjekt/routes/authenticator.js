@@ -8,20 +8,8 @@ const rateLimit = require('express-rate-limit');
 const { createDatabaseConnection } = require("../database/database")
 const config = require("../database/sqlconfig");
 
-let db; 
-(async () => {
-  try {
-    db = await createDatabaseConnection(config);
-    console.log("[authenticator] Database connected");
-  } catch (err) {
-    console.error("Database connection failed:", err);
-  }
-})();
+let db = require("../database/sql");
 
-
-const config = require('../database/sqlconfig');       
-const { createDatabaseConnection } = require('../database/database'); 
-const testdb = require("../database/sql");
 
 const loginLimiter = rateLimit({
     windowMs: 1* 10 * 1000, // 10 seconds
@@ -132,7 +120,7 @@ router.post("/verify", async (req, res) => {
         maxAge: 1000 * 60 * 60 // 1 time
     });
 
-    const id = await testdb.getIdFromMail(email);
+    const id = await db.getIdFromMail(email);
 
     req.session.user = req.session.user = {
     id: id,
