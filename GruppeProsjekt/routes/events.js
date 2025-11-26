@@ -41,6 +41,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/setSelectedEvent", (req, res) => {
   const { event } = req.body;
   req.session.selectedEvent = event;
   console.log("req session", req.session)
