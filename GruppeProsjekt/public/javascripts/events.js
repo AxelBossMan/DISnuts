@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // payload er { events: [...], company_name: ... }
     const events = payload.events || [];
     const companyName = payload.company_name || null;
-    const companySlug = payload.company_slug
+    //const companySlug = payload.company_slug
 
     // sett tittel
     titleEl.textContent = `${companyName} – events`;
@@ -50,6 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     });
 
+    function slugify(text) {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
+    }
+
     // Klikk på "Manage"
     const buttons = grid.querySelectorAll(".manage-event");
     buttons.forEach((btn, index) => {
@@ -57,7 +65,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const ev = events[index];
         localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
-        window.location.href = `/${companySlug}/manage`;
+        const eventSlug = slugify(ev.event_name);
+        window.location.href = `/${eventSlug}/manage`;
       });
     });
 
@@ -65,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error loading events page:", err);
     grid.innerHTML = `<p style="color:red;">Could not load events from server.</p>`;
   }
-
 
   const returnBtn = document.getElementById("return");
   if (returnBtn) {

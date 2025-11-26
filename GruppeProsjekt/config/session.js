@@ -12,7 +12,7 @@ const sessionMiddleware = session({
     httpOnly: true,
     // only secure cookies over HTTPS in production
     secure: false, //BYTT TIL TRUE I FINAL VERSION
-    maxAge: 1000 * 60 * 60 // 1 time
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 });
 

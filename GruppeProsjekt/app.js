@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 require('express-async-errors'); // to handle async errors try/catch
 
 var express = require('express');
@@ -73,4 +73,5 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
 });
 
+require("./scheduler");
 module.exports = app;

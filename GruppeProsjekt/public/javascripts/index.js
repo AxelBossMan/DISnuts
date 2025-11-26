@@ -254,7 +254,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
 
-  const { event_id, event_description, event_name, event_location, event_time } = JSON.parse(selectedEventRaw);
+  const { 
+    event_id, 
+    event_name, 
+    location, 
+    time, 
+    event_description 
+  } = JSON.parse(selectedEventRaw);
 
     // 🔹 Last lagret intro + keywords for valgt event
   if (currentEventId) {
@@ -310,8 +316,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     Use the following event information exactly as provided:
     Event name: ${event_name}
     Description: ${event_description}
-    Location: ${event_location}
-    Time: ${event_time}
+    Location: ${location}
+    Time: ${time}
 
     Requirements:
     - Write in English
