@@ -9,6 +9,7 @@ require("dotenv").config();
 const db = require("../database/sql");
 const config = require('../database/sqlconfig');       
 const { createDatabaseConnection } = require('../database/database'); 
+const { DateTime } = require("mssql");
 
 // Sett opp Twilio-klient
 const client = twilio(
@@ -198,12 +199,13 @@ router.post("/incoming",
 
       const key = incomingBody.toUpperCase();
 
+      const eventId = await db.readOneEvent(event_id)
       // sett inn db her 
       await db.create({
         message: incomingBody,
-        from_number: from,
+        from_number: from.replace("whatsapp: "),
         matched_word: key,
-        event_id: 4
+        event_id: eventId.event_id
       }, "message_log");
 
       if (lastPairs && lastPairs[key]) {

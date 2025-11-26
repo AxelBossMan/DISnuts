@@ -10,6 +10,7 @@ const config = require("../database/sqlconfig");
 
 let db = require("../database/sql");
 
+const twoFactorCodes = {};
 
 const loginLimiter = rateLimit({
     windowMs: 1* 10 * 1000, // 10 seconds
@@ -36,7 +37,8 @@ router.post("/register",
       return res.status(400).json({ success: false, message: errors.array()[0].msg });
     }
     // database connection 
-    // const db = req.app.locals.db;
+    //const db = req.app.locals.db;
+    const db = require("../database/sql");
     const { company_name, email, phone_number, password } = req.body;
 
     /*
@@ -45,6 +47,29 @@ router.post("/register",
     }
 */
     try {
+      
+        // sjekk om email finnes
+        const existingEmail = await db.raw(`
+            SELECT email FROM dbo.company WHERE email = '${email}'
+        `);
+        if (existingEmail.length > 0) {
+            return res.status(400).json({
+            success: false,
+            message: "Denne e-posten er allerede registrert"
+            });
+        }
+
+        //sjekk om telefon finnes
+        const existingPhone = await db.raw(`
+            SELECT phone_number FROM dbo.company WHERE phone_number = '${phone_number}'
+        `);
+
+        if (existingPhone.length > 0) {
+            return res.status(400).json({
+            success: false,
+            message: "Dette telefonnummeret er allerede registrert"
+            });
+        }
         await db.create(
             { company_name, email, phone_number, password },
             "company"
@@ -81,15 +106,20 @@ router.post("/login", loginLimiter,
         if (!company) {
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
+        // Sjekk om en 2FA-kode allerede er sendt
+        if (twoFactorCodes[email]) {
+            return res.json({
+              success: true,
+              message: "A 2FA code has already been sent. Please check your email."
+            });
+          }
 
         // Lag 2FA-kode 
         const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-        // Lagre midlertidig
-        // req.app.locals brukes for enkel lagring uten database
-        req.app.locals.twoFactorCodes ??= {};
-        req.app.locals.twoFactorCodes[email] = code;
 
+        twoFactorCodes[email] = code;
+      
         // Send kode på e-post
         await sendEmail(email, code);
 
@@ -104,15 +134,13 @@ router.post("/login", loginLimiter,
 // VERIFY 2FA CODE
 // ----------------------
 router.post("/verify", async (req, res) => {
+    const db = require("../database/sql"); 
     const { email, code } = req.body;
 
-    const codes = req.app.locals.twoFactorCodes;
-
-    if (!codes || codes[email] !== code) {
+    if (twoFactorCodes[email] !== code) {
         return res.status(401).json({ success: false, error: "Invalid code" });
     }
-
-    delete codes[email];
+    delete twoFactorCodes[email];
 
      // Sett cookie tilgjengelig for frontend
      res.cookie("companySession", email, {
