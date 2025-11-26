@@ -30,7 +30,13 @@ const loginLimiter = rateLimit({
 router.post("/register",
     // express validator - sjekker gyldigheten på det skrevet inn
     [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
-    body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer")
+    body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer"), body("confirmPassword")
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error("Passordene er ikke like");
+      }
+      return true;
+    })
     ],
     // check if valid and process registration
     async (req, res) => {

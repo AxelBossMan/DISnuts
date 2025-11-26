@@ -8,13 +8,20 @@ form.addEventListener("submit", async function (event) {
     const email = form.email.value;
     const phoneNumber = form.phone_number.value;
     const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+
+    if (password !== confirmPassword) {
+        alert("Passord og bekreftelse er ikke like.");
+        return; // ikke send request til backend
+    }
 
     // Lager et vanlig objekt for å sende til backend
     const data = {
         company_name: companyName,
         email: email,
         phone_number: phoneNumber,
-        password: password
+        password: password,
+        confirmPassword: confirmPassword
     };
 
     // Sender request til backend
