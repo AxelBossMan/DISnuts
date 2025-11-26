@@ -5,7 +5,7 @@ const db = require("../database/sql");
 router.get("/", async (req, res) => {
   try {
     if (!req.cookies.companySession) {
-      return res.redirect("/login.html");
+      return res.redirect("/login");
     }
 
     const email = req.cookies.companySession;

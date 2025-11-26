@@ -1,5 +1,3 @@
-
-// HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 let currentEventId = null;
 
@@ -7,7 +5,6 @@ if (selectedEventRaw) {
   try {
     const selectedEvent = JSON.parse(selectedEventRaw);
 
-    // 👇 DEN VIKTIGE LINJEN
     currentEventId = selectedEvent.event_id;
 
     const label = document.getElementById("selected-event-label");
@@ -35,7 +32,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const scheduleSelect = document.getElementById("scheduleSelect");
   const customSchedule = document.getElementById("customSchedule");
 
-    // Hvis bruker velger "custom" → vis datetime-input
     scheduleSelect.addEventListener("change", () => {
       if (scheduleSelect.value === "custom") {
         customSchedule.style.display = "block";
@@ -196,7 +192,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Send-knappen
-  // Send-knappen
   sendBtn.addEventListener("click", async () => {
     // 1. legg inn schedule i payload
     if (scheduleSelect.value === "custom") {
@@ -262,7 +257,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     event_description 
   } = JSON.parse(selectedEventRaw);
 
-    // 🔹 Last lagret intro + keywords for valgt event
+
   if (currentEventId) {
     try {
       const res = await fetch(`/api/load?event_id=${currentEventId}`);
@@ -302,7 +297,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   return data.reply; 
   }
 
-  // Generer intro med ChatGPT
   generateBtn.addEventListener("click", async () => {
     // show skeleton loader on intro input while generating
     try {

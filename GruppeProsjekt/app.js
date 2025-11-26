@@ -6,7 +6,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var helmet = require('helmet');
-var limiter = require('express-rate-limit'); 
 var sessionMiddleware = require('./config/session');
 
 var indexRouter = require('./routes/index');
@@ -18,7 +17,6 @@ var chatRouter= require('./routes/chat');
 var testRouter = require('./routes/test');
 
 var app = express();
-var port = process.env.PORT || 3000;
 
 // middleware
 app.use(logger('dev'));

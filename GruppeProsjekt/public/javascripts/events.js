@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const payload = await response.json();
     console.log("DATA FROM /api/events:", payload);
 
-    // payload er { events: [...], company_name: ... }
+   
     const events = payload.events || [];
     const companyName = payload.company_name || null;
     //const companySlug = payload.company_slug
