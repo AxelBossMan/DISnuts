@@ -50,6 +50,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
     });
 
+    function slugify(text) {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
+    }
+
     // Klikk på "Manage"
     const buttons = grid.querySelectorAll(".manage-event");
     buttons.forEach((btn, index) => {
@@ -57,7 +65,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const ev = events[index];
         localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
-        window.location.href = `/${companySlug}/manage`;
+        const eventSlug = slugify(ev.event_name);
+        window.location.href = `/${eventSlug}/manage`;
       });
     });
 
