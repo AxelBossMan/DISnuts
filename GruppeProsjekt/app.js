@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config();
 require('express-async-errors'); // to handle async errors try/catch
 
 var express = require('express');
@@ -43,6 +43,11 @@ app.get("/login", (req, res) => {
 // register-side
 app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));
+});
+
+app.get("/:company/manage", (req, res) => {
+  // samme hoved-side som "/"
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 // sider

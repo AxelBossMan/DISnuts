@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // payload er { events: [...], company_name: ... }
     const events = payload.events || [];
     const companyName = payload.company_name || null;
+    const companySlug = payload.company_slug
 
     // sett tittel
     titleEl.textContent = `${companyName} – events`;
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const ev = events[index];
         localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
-        window.location.href = "/";
+        window.location.href = `/${companySlug}/manage`;
       });
     });
 
@@ -69,7 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const returnBtn = document.getElementById("return");
   if (returnBtn) {
     returnBtn.addEventListener("click", () => {
-      window.location.href = "/";
+      window.location.href = `/${companySlug}/manage`;
     });
   }
 });

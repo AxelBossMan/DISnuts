@@ -7,7 +7,8 @@ const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 const { createDatabaseConnection } = require("../database/database")
 const config = require("../database/sqlconfig");
-
+const { hashPassword } = require("../crypto/hashing");
+const { verifyPassword } = require("../crypto/hashing");
 let db = require("../database/sql");
 
 const twoFactorCodes = {};
@@ -41,7 +42,6 @@ router.post("/register",
     //const db = req.app.locals.db;
     const db = require("../database/sql");
     const { company_name, email, phone_number, password } = req.body;
-
     /*
     if (!company_name || !email || !password) {
         return res.status(400).json({ success: false, error: "Missing fields" });
@@ -71,8 +71,11 @@ router.post("/register",
             message: "Dette telefonnummeret er allerede registrert"
             });
         }
+        // hash passord
+        const hashedPassword = await hashPassword(password);
+
         await db.create(
-            { company_name, email, phone_number, password },
+            { company_name, email, phone_number, password:hashedPassword },
             "company"
         );
 
@@ -102,7 +105,7 @@ router.post("/login", loginLimiter,
     try {
         const companies = await db.readAll("company");
         // Finn selskap med matching e-post og passord
-        const company = companies.find(c => c.email === email && c.password === password);
+        const company = companies.find(c => c.email === email);
 
         if (!company) {
             return res.status(401).json({ success: false, error: "Invalid login" });
@@ -114,6 +117,11 @@ router.post("/login", loginLimiter,
               message: "A 2FA code has already been sent. Please check your email."
             });
           }
+
+        const passwordMatch = await verifyPassword(password, company.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ success: false, error: "Invalid login" });
+        }
 
         // Lag 2FA-kode 
         const code = Math.floor(100000 + Math.random() * 900000).toString();
