@@ -106,6 +106,13 @@ router.post("/login", loginLimiter,
         if (!company) {
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
+        // Sjekk om en 2FA-kode allerede er sendt
+        if (twoFactorCodes[email]) {
+            return res.json({
+              success: true,
+              message: "A 2FA code has already been sent. Please check your email."
+            });
+          }
 
         // Lag 2FA-kode 
         const code = Math.floor(100000 + Math.random() * 900000).toString();
