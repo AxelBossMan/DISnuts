@@ -45,6 +45,11 @@ app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));
 });
 
+app.get("/:company/manage", (req, res) => {
+  // samme hoved-side som "/"
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
+
 // sider
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
