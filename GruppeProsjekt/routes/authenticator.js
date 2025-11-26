@@ -155,7 +155,8 @@ router.post("/verify", async (req, res) => {
     req.session.user = req.session.user = {
     id: id,
     name: email,
-    role: 'admin'
+    role: 'admin',
+    events: {}
   };
     
     res.json({ success: true, message: "Login successful!" });
