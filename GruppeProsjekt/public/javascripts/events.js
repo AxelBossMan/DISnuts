@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // payload er { events: [...], company_name: ... }
     const events = payload.events || [];
     const companyName = payload.company_name || null;
-    const companySlug = payload.company_slug
+    //const companySlug = payload.company_slug
 
     // sett tittel
     titleEl.textContent = `${companyName} – events`;
@@ -74,7 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error loading events page:", err);
     grid.innerHTML = `<p style="color:red;">Could not load events from server.</p>`;
   }
-
 
   const returnBtn = document.getElementById("return");
   if (returnBtn) {
