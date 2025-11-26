@@ -3,6 +3,9 @@ const router = express.Router();
 const db = require("../database/sql");
 
 router.get("/", async (req, res) => {
+  if (!req.cookies.companySession) {
+    return res.redirect("/login.html");  
+  }
   try {
     // 1. Hent ALLE events
     const events = await db.readAll("event");

@@ -1,5 +1,4 @@
 
-
 // HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 let currentEventId = null;
@@ -124,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
-  function addRow() {
+  function addRow(wordValue="",answerValue="") {
     const row = document.createElement("tr");
 
     // Word input
@@ -134,6 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     wordInput.placeholder = "Word";
     wordInput.className = "word-input";
     wordInput.style.padding = "6px";
+    wordInput.value = wordValue;
     wordInput.addEventListener("input", buildPreview);
     wordCell.appendChild(wordInput);
 
@@ -144,6 +144,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     answerInput.placeholder = "Answer";
     answerInput.className = "answer-input";
     answerInput.style.padding = "6px";
+    answerInput.value = answerValue;
     answerInput.addEventListener("input", buildPreview);
     answerCell.appendChild(answerInput);
 
@@ -176,7 +177,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // events
-  addBtn.addEventListener("click", addRow);
+  addBtn.addEventListener("click", () => addRow());
   introInput.addEventListener("input", buildPreview);
 
   // Enter i et inputfelt = legg til ny rad
@@ -241,7 +242,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch("/api/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({payload, event_id: currentEventId }),
       });
 
       const result = await response.json();
@@ -255,7 +256,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const { event_id, event_description, event_name, event_location, event_time } = JSON.parse(selectedEventRaw);
 
-   async function askChatGPT(prompt) {
+    // 🔹 Last lagret intro + keywords for valgt event
+  if (currentEventId) {
+    try {
+      const res = await fetch(`/api/load?event_id=${currentEventId}`);
+      const data = await res.json();
+
+      if (data.success && data.payload) {
+        const { intro, keywords } = data.payload;
+
+        // sett intro-tekst i tekstboksen
+        introInput.value = intro || "";
+
+        // fyll tabellen med keywords
+        const pairs = keywords || {}; // f.eks. { SKI: 'nordmann' }
+
+        Object.entries(pairs).forEach(([word, answer]) => {
+          addRow(word, answer);
+        });
+
+        // oppdater preview
+        buildPreview();
+      }
+    } catch (err) {
+      console.error("Could not load saved payload:", err);
+    }
+  }
+
+
+  async function askChatGPT(prompt) {
     const res = await fetch('/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -265,8 +294,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const data = await res.json();
   // console.log('Svar fra ChatGPT:', data.reply);
   return data.reply; 
-}
+  }
 
+  // Generer intro med ChatGPT
   generateBtn.addEventListener("click", async () => {
     // show skeleton loader on intro input while generating
     try {
