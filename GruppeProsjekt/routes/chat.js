@@ -22,7 +22,6 @@ router.post('/', async (req, res) => {
       input: prompt,                  // dette er "prompten"
     });
 
-    // hent ren tekst ut av svaret
     // console.log('ChatGPT response:', response);
     const text = response.output[0].content[0].text;
 

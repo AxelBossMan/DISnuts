@@ -45,18 +45,13 @@ app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));
 });
 
-app.get("/:company/manage", (req, res) => {
-  // samme hoved-side som "/"
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
 // sider
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // API-ruter
-app.use('/api', smsRouter);          // f.eks. /api/sms eller hva du har der
-app.use('/api/events', eventsRouter); // VIKTIG: nå får du GET /api/events
+app.use('/api', smsRouter);        
+app.use('/api/events', eventsRouter); 
 
 // auth-rute
 app.use('/authenticator', authRouter);

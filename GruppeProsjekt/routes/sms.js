@@ -35,10 +35,6 @@ router.post("/save", async (req, res) => {
     return res.status(400).json({ success: false, error: "Missing event_id" });
   }
 
-  // if (!req.session.user.events) {
-  //   req.session.user.events = {};
-  // }
-  
   // oppdater session med event_id
   lastPairs = keywords;
   const payload = { intro, keywords };
