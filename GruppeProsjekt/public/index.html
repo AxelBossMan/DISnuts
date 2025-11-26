@@ -5,6 +5,11 @@
   <title>Understory – message function</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/stylesheets/index.css" />
+  <script>
+    if (!document.cookie.includes("companySession=")) {
+        window.location.href = "/login.html";
+    }
+  </script>
 </head>
 
 <body>
@@ -19,7 +24,16 @@
       </div>
 
       <div id="textBox">
+        <p>Set the tone straight by selecting desired mood for text proposal</p>
+        <div id="moods">
+          <button class="mood">Joyful</button>
+          <button class="mood">Sad</button>
+          <button class="mood">Lovable</button>
+          <button class="mood">Formal</button>
+          <button class="mood">Normal</button>
+        </div>
         <button id="generate">Generate text proposal (AI)</button>
+        
         <textarea
         id="messageInput"
         placeholder="Type intro here"

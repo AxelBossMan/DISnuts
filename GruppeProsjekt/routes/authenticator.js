@@ -23,6 +23,7 @@ const loginLimiter = rateLimit({
         error: 'Too many requests, please try again in 3 minutes.'
     }
 })
+
     
 // REGISTER
 // ----------------------
@@ -109,6 +110,13 @@ router.post("/login", loginLimiter,
         if (!company) {
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
+        // Sjekk om en 2FA-kode allerede er sendt
+        if (twoFactorCodes[email]) {
+            return res.json({
+              success: true,
+              message: "A 2FA code has already been sent. Please check your email."
+            });
+          }
 
         const passwordMatch = await verifyPassword(password, company.password);
         if (!passwordMatch) {
@@ -155,7 +163,8 @@ router.post("/verify", async (req, res) => {
     req.session.user = req.session.user = {
     id: id,
     name: email,
-    role: 'admin'
+    role: 'admin',
+    events: {}
   };
     
     res.json({ success: true, message: "Login successful!" });
