@@ -7,9 +7,10 @@ const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 const { createDatabaseConnection } = require("../database/database")
 const config = require("../database/sqlconfig");
-const { hashPassword } = require("../crypto/hashing");
-const { verifyPassword } = require("../crypto/hashing");
+const { hashPassword, verifyPassword } = require("../crypto/hashing");
+const { encrypt_phoneNumber, decrypt_phoneNumber } = require("../crypto/symmetricCrypto");
 let db = require("../database/sql");
+
 
 const twoFactorCodes = {};
 
@@ -55,7 +56,7 @@ router.post("/register",
 */
     try {
       
-        // sjekk om email finnes
+        // check if email exists
         const existingEmail = await db.raw(`
             SELECT email FROM dbo.company WHERE email = '${email}'
         `);
@@ -66,22 +67,30 @@ router.post("/register",
             });
         }
 
-        //sjekk om telefon finnes
-        const existingPhone = await db.raw(`
-            SELECT phone_number FROM dbo.company WHERE phone_number = '${phone_number}'
-        `);
-
-        if (existingPhone.length > 0) {
-            return res.status(400).json({
-            success: false,
-            message: "Dette telefonnummeret er allerede registrert"
-            });
+        //check if phone number exists
+        const companies = await db.readAll("company");
+        const phoneExists = companies.some((company) => {
+        if (!company.phone_number) return false;
+        try {
+          const decrypted = decrypt_phoneNumber(company.phone_number);
+          return decrypted === phone_number;
+        } catch {
+          return false;
         }
+      });
+
+      if (phoneExists) {
+        return res.status(400).json({
+          success: false,
+          message: "This number is already registered",
+        });
+      }
         // hash passord
         const hashedPassword = await hashPassword(password);
-
+        const encrypted = encrypt_phoneNumber(phone_number);
+    
         await db.create(
-            { company_name, email, phone_number, password:hashedPassword },
+            { company_name, email, phone_number:encrypted, password:hashedPassword },
             "company"
         );
 
