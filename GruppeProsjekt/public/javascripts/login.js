@@ -22,15 +22,18 @@ loginForm.addEventListener("submit", async function (event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
     });
-
     const result = await response.json();
+
+    if(result.success){
+        console.log("2FA sent:", result.message);
+    }
 
     if (!result.success) {
         const msg = result.message ||result.error || "Login failed.";
         errorMsg.textContent = msg;
         errorMsg.style.display = "block";
         return;
-    }
+    } 
 
     window.location.href = "/verify.html?email=" + encodeURIComponent(email);
 });
