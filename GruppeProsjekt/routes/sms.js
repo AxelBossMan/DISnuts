@@ -24,9 +24,25 @@ let bodyText = "";
   SAVE TEMPLATE
 */
 router.post("/save", async (req, res) => {
-  const intro = req.body.intro || "";
-  const keywords = req.body.keywords || {};
+  const intro = req.body.payload.intro || "";
+  const keywords = req.body.payload.keywords || {};
+  const event_id = req.body.event_id;
+
+  console.log("[sms.js] /save payload:", { intro, keywords, event_id });
+
+  if (!event_id) {
+    return res.status(400).json({ success: false, error: "Missing event_id" });
+  }
+
+  // if (!req.session.user.events) {
+  //   req.session.user.events = {};
+  // }
+  
+  // oppdater session med event_id
   lastPairs = keywords;
+  const payload = { intro, keywords };
+  req.session.user.events[event_id] = payload; //oppdater session payload
+  console.log("Session payload updated:", req.session.user);
 
   bodyText = intro;
   const words = Object.keys(keywords || {});

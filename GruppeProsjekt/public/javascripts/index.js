@@ -1,5 +1,4 @@
 
-
 // HENT VALGT EVENT FRA localStorage
 const selectedEventRaw = localStorage.getItem("selectedEvent");
 let currentEventId = null;
@@ -241,7 +240,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch("/api/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({payload, event_id: currentEventId }),
       });
 
       const result = await response.json();
