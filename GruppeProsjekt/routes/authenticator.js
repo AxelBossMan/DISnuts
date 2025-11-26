@@ -7,6 +7,8 @@ const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 const { createDatabaseConnection } = require("../database/database")
 const config = require("../database/sqlconfig");
+// Use MailerSend instead of nodemailer for sending emails
+const { MailerSend, Sender, Recipient, EmailParams } = require('mailersend');
 const { hashPassword } = require("../crypto/hashing");
 const { verifyPassword } = require("../crypto/hashing");
 let db = require("../database/sql");
@@ -181,21 +183,30 @@ router.post("/verify", async (req, res) => {
 // E-MAIL FUNCTION
 // ----------------------
 async function sendEmail(email, code) {
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
+    // Prefer explicit MAILERSEND_API_KEY env var; fall back to generic API_KEY if present
+    const apiKey = process.env.MAILERSEND_API_KEY || process.env.API_KEY;
+    if (!apiKey) {
+        throw new Error('Missing MailerSend API key in MAILERSEND_API_KEY or API_KEY');
+    }
 
-    return transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "Your authentication code",
-        text: `Your login code is: ${code}`
-    });
-    
+    const mailerSend = new MailerSend({ apiKey });
+
+    // Sender - fallbacks to EMAIL_USER or a sensible default
+    const fromEmail = process.env.EMAIL_USER || process.env.EMAIL_FROM || 'no-reply@example.com';
+    const fromName = process.env.EMAIL_NAME || 'Your Service';
+    const sentFrom = new Sender(fromEmail, fromName);
+
+    const recipients = [new Recipient(email)];
+
+    const emailParams = new EmailParams()
+        .setFrom(sentFrom)
+        .setTo(recipients)
+        .setReplyTo(sentFrom)
+        .setSubject('Your authentication code')
+        .setText(`Your login code is: ${code}`)
+        .setHtml(`<p>Your login code is: <strong>${code}</strong></p>`);
+
+    return mailerSend.email.send(emailParams);
 }
 
 module.exports = router;
