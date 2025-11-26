@@ -61,8 +61,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Klikk på "Manage"
     const buttons = grid.querySelectorAll(".manage-event");
     buttons.forEach((btn, index) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const ev = events[index];
+
+        await fetch("/events/setSelectedEvent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ event: ev }),
+        }).then((res) => console.log("Set selected event POST sent:", res));
+
         localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
         const eventSlug = slugify(ev.event_name);
