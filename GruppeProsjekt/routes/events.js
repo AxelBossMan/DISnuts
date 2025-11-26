@@ -41,5 +41,10 @@ router.get("/", async (req, res) => {
   }
 });
 
+  const { event } = req.body;
+  req.session.selectedEvent = event;
+  console.log("req session", req.session)
+  res.json({ success: true });
+});
 
 module.exports = router;
