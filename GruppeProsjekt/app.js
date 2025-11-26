@@ -1,4 +1,4 @@
-require('dotenv').config({ path: __dirname + '/.env' });
+require('dotenv').config();
 require('express-async-errors'); // to handle async errors try/catch
 
 var express = require('express');

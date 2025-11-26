@@ -137,6 +137,7 @@ router.post("/login", loginLimiter,
       
         // Send kode på e-post
         await sendEmail(email, code);
+      
 
         res.json({ success: true, message: "2FA code sent to email" });
     } catch (err) {
@@ -194,6 +195,7 @@ async function sendEmail(email, code) {
         subject: "Your authentication code",
         text: `Your login code is: ${code}`
     });
+    
 }
 
 module.exports = router;
