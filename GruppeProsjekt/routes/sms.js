@@ -56,6 +56,25 @@ router.post("/save", async (req, res) => {
   res.json({ success: true, bodyText });
 });
 
+router.get("/load", (req, res) => {
+  const event_id = req.query.event_id;
+
+  if (!event_id) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Missing event_id" });
+  }
+
+  // sjekk at bruker og events finnes i session
+  if (!req.session.user || !req.session.user.events) {
+    return res.json({ success: true, payload: null });
+  }
+
+  const payload = req.session.user.events[event_id] || null;
+
+  return res.json({ success: true, payload });
+});
+
 /*
   SCHEDULE MESSAGE og sende til database tabellen eller sende med en gang
 */
