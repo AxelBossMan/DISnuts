@@ -73,7 +73,7 @@ class Database {
     const result = await pool.request()
       .input("event_code", sql.VarChar, code)
       .query("SELECT * FROM dbo.event WHERE event_code = @event_code");
-    console.log("readOneEventByCode result:", result);
+    // console.log("readOneEventByCode result:", result);
     return result.recordset[0];
   }
   async readOneEvent(event_id) {
@@ -126,16 +126,17 @@ class Database {
     const result = await pool.request()
       .input("event_id", sql.Int, event_id)
       .query(`
-        SELECT word, answer_text
+        SELECT word_lower, answer_text
         FROM dbo.keyword
         WHERE event_id = @event_id
       `);
     
     const keywords = {};
+    console.log("Database getKeywordsForEventID result:", result.recordset);
     result.recordset.forEach(row => {
-      keywords[row.word] = row.answer_text;
+      keywords[row.word_lower] = row.answer_text;
     });
-    console.log("Fetched keywords for event_id", event_id, ":", keywords);
+    // console.log("Fetched keywords for event_id", event_id, ":", keywords);
     return keywords;
   }
   async getAllEventCodes() {
