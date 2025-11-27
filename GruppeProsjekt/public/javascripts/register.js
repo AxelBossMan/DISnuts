@@ -36,7 +36,6 @@ form.addEventListener("submit", async function (event) {
     const result = await response.json();
     alert(result.message);
 
-    // Hvis alt gikk bra → videre til login
     if (result.success) {
         window.location.href = "/login";
     }
