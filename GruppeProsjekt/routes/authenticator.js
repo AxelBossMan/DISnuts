@@ -32,7 +32,7 @@ const loginLimiter = rateLimit({
 // REGISTER
 // ----------------------
 router.post("/register",
-    // express validator - sjekker gyldigheten på det skrevet inn
+    // express validator, checks validity of input
     [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
     body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer"), body("confirmPassword")
     .custom((value, { req }) => {
