@@ -1,4 +1,3 @@
-// const selectedEventRaw = localStorage.getItem("selectedEvent");
 let currentEventId = null;
 let selectedEventRaw = null;  
 
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
     } catch (e) {
-      console.error("Could not parse selectedEvent from localStorage", e);
+      console.error("Could not parse selectedEvent from localStorage", e); //endre dette ???????????????????+
     }
   }
 });

@@ -74,9 +74,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         }).then(res => res.json())
           .then(data => console.log("Set selected event POST sent:", data));
 
-        // TA VEKK? ----------------------------------------------------------------------------------------
-        
-        // localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
         const eventSlug = slugify(ev.event_name);
         window.location.href = `/${eventSlug}/manage`;
