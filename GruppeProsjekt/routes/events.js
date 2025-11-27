@@ -43,9 +43,16 @@ router.get("/", async (req, res) => {
 
 router.post("/setSelectedEvent", (req, res) => {
   const { event } = req.body;
-  req.session.selectedEvent = event;
+  const selectedEvent = event
+  req.session.selectedEvent = selectedEvent || "test event";
   console.log("req session", req.session)
-  res.json({ success: true });
+  res.json({ success: true, event: selectedEvent, message: "Selected event set in session" });
+});
+
+router.get("/setSelectedEvent", (req, res) => {
+  const selectedEvent = req.session.selectedEvent || null;
+  console.log("Retrieved selected event from session:", selectedEvent);
+  res.json({ success: true, event: selectedEvent, message: "Selected event retrieved from session" });
 });
 
 module.exports = router;

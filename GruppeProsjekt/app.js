@@ -8,6 +8,11 @@ var logger = require('morgan');
 var helmet = require('helmet');
 var sessionMiddleware = require('./config/session');
 
+var app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var smsRouter = require('./routes/sms');
@@ -16,7 +21,6 @@ var authRouter = require('./routes/authenticator');
 var chatRouter= require('./routes/chat');
 var testRouter = require('./routes/test');
 
-var app = express();
 
 // middleware
 app.use(logger('dev'));
