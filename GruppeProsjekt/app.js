@@ -68,5 +68,7 @@ app.use((err, req, res, next) => {
 // statiske filer (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 require("./scheduler");
+
 module.exports = app;

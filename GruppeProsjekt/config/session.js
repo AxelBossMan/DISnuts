@@ -5,7 +5,7 @@ const session = require('express-session');
  * For production you should use a persistent store (Redis, SQL, etc.).
  */
 const sessionMiddleware = session({
-  secret: process.env.SESSION_SECRET || 'understory123',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
