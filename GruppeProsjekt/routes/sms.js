@@ -108,16 +108,18 @@ router.post("/send", async (req, res) => {
     console.log("[/send] using sendTime:", sendTime.toISOString());
 
     // lagre jobben i DB
-    await db.create(
-      {
-        event_id,
-        intro,
-        keywords: JSON.stringify(keywords || {}),
-        send_time: sendTime.toISOString(),
-        status: "scheduled"
-      },
-      "scheduled_messages"
-    );
+    if (sched !== "now" && sched !== "") {
+      await db.create(
+        {
+          event_id,
+          intro,
+          keywords: JSON.stringify(keywords || {}),
+          send_time: sendTime.toISOString(),
+          status: "scheduled"
+        },
+        "scheduled_messages"
+      );
+  }
 
     // Hent alle deltakere
     const recipients = await db.getRecipientsForEvent(event_id);

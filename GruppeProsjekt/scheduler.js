@@ -38,7 +38,29 @@ async function checkMessagesDue() {
     const recipients = await db.getRecipientsForEvent(job.event_id);
 
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
-    const smsBody = job.intro;
+    
+    // Lag selve meldingen med intro + keywords
+    let smsBody = job.intro || "";
+
+    // Parse keywords (lagres som JSON-string i DB)
+    let keywords = {};
+    try {
+      keywords = JSON.parse(job.keywords || "{}");
+    } catch (e) {
+      console.error("Could not parse keywords:", e);
+      keywords = {};
+    }
+
+    // Hvis det finnes keywords, legg dem til meldingen
+    const wordList = Object.keys(keywords);
+
+    if (wordList.length > 0) {
+      smsBody += "\n\nAvailable keywords:\n";
+      for (const w of wordList) {
+        smsBody += `• ${w}\n`;
+      }
+    }
+
 
     for (const r of recipients) {
       if (!r.phone_number) continue;
