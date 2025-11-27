@@ -205,11 +205,26 @@ router.post("/incoming",
 
       console.log("[sms.js] Incoming:", incomingBody);
 
-      const key = incomingBody.toUpperCase();
-      
-      //finn alle event_codes i db så søke for kodene i incomding body
+      const upper = incomingBody.toUpperCase();
+      const codes = await db.getAllEventCodes();
 
-      const event_code = Object.keys(await db.getAllEventCodes()).find(code => incomingBody.includes(code));
+      // finn match i starten av meldingen
+      const event_code = codes.find(code =>
+        upper.startsWith(code.toUpperCase())
+      );
+
+      if (!event_code) {
+        console.log("Fant ikke event_code i starten");
+        return res.json({ success: false });
+      }
+
+      // slice resten
+      const key = incomingBody.slice(event_code.length).trim();
+
+      console.log("EVENT_CODE:", event_code);
+      console.log("KEY:", key);
+      
+      console.log("[sms.js] Extracted event_code from incoming message:", event_code);
 
       if (!event_code) {
         console.log("[sms.js] No matching event_code found in incoming message.");

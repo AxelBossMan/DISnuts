@@ -1,4 +1,3 @@
-
 require('express-async-errors'); // to handle async errors try/catch
 
 var express = require('express');
@@ -21,7 +20,6 @@ var authRouter = require('./routes/authenticator');
 var chatRouter= require('./routes/chat');
 var testRouter = require('./routes/test');
 
-
 // middleware
 app.use(logger('dev'));
 app.use(express.json());
@@ -34,8 +32,6 @@ app.set('trust proxy', 1);
 
 const db = require("./database/sql");
 app.locals.db = db;
-
-
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public/login.html"));
