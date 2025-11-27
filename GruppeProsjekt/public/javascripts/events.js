@@ -63,16 +63,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     buttons.forEach((btn, index) => {
       btn.addEventListener("click", async () => {
         const ev = events[index];
+        console.log("Managing event:", ev);
 
-        await fetch("/events/setSelectedEvent", {
+        await fetch("/api/events/setSelectedEvent", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({ event: ev }),
-        }).then((res) => console.log("Set selected event POST sent:", res));
+        }).then(res => res.json())
+          .then(data => console.log("Set selected event POST sent:", data));
 
-        localStorage.setItem("selectedEvent", JSON.stringify(ev));
         console.log(ev.id);
         const eventSlug = slugify(ev.event_name);
         window.location.href = `/${eventSlug}/manage`;

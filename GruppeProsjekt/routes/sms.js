@@ -20,6 +20,10 @@ router.post("/save", async (req, res) => {
   const keywords = req.body.payload.keywords || {};
   const event_id = req.body.event_id;
 
+
+  req.session.currentEventId = event_id;
+  console.log("[sms.js] Set currentEventId in session:", event_id);
+
   console.log("[sms.js] /save payload:", { intro, keywords, event_id });
 
   if (!event_id) {
@@ -30,6 +34,7 @@ router.post("/save", async (req, res) => {
   lastPairs = keywords;
   const payload = { intro, keywords };
   req.session.user.events[event_id] = payload; //oppdater session payload
+  
   console.log("Session payload updated:", req.session.user);
 
   bodyText = intro;
@@ -72,6 +77,9 @@ router.post("/send", async (req, res) => {
     if (!event_id) {
       return res.status(400).json({ success: false, error: "Missing event_id" });
     }
+    // log keywords i DB
+    await db.createKeywordLog(keywords, event_id, "keyword");
+
 
     const event = await db.readOneEvent(event_id);
     if (!event) {
@@ -159,7 +167,7 @@ router.post("/send", async (req, res) => {
           to: "whatsapp:"+r.phone_number,
           body: smsBody
         });
-        console.log(fromNumber, r.phone_number, msg)
+        console.log(fromNumber, r.phone_number, smsBody)
         sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
       }
 
@@ -189,25 +197,45 @@ router.post("/send", async (req, res) => {
 router.post("/incoming",
   express.urlencoded({ extended: true }),
   express.json(),
-
-  async (req, res) => {
+  async (req, res) => { //INCOMING
     try {
+
       const incomingBody = (req.body.Body || req.body.body || "").toString().trim();
       const from = req.body.From || req.body.from || "unknown";
 
       console.log("[sms.js] Incoming:", incomingBody);
 
       const key = incomingBody.toUpperCase();
+      
+      //finn alle event_codes i db så søke for kodene i incomding body
 
-      const eventId = await db.readOneEvent(event_id)
+      const event_code = Object.keys(await db.getAllEventCodes()).find(code => incomingBody.includes(code));
+
+      if (!event_code) {
+        console.log("[sms.js] No matching event_code found in incoming message.");
+        return res.json({ success: true, matched: false });
+      }
+
+      console.log("[sms.js] Matched event_code:", event_code);
+      
+      const event = await db.readOneEventByCode(event_code);
+      
+      
+      if (!event) {
+        return res.status(404).json({ success: false, error: "Event not found for incoming SMS" });
+      }
+      
       // sett inn db her 
       await db.create({
         message: incomingBody,
         from_number: from.replace("whatsapp: "),
         matched_word: key,
-        event_id: eventId.event_id
+        event_id: event.event_id
       }, "message_log");
 
+      lastPairs = await db.getKeywordsForEventID(event.event_id);
+
+      console.log("[sms.js] lastPairs for event", event.event_id  , ":", lastPairs);
       if (lastPairs && lastPairs[key]) {
         let reply = `Keyword ${key}:\n${lastPairs[key]}`;
 

@@ -1,21 +1,30 @@
-const selectedEventRaw = localStorage.getItem("selectedEvent");
 let currentEventId = null;
+let selectedEventRaw = null;  
 
-if (selectedEventRaw) {
-  try {
-    const selectedEvent = JSON.parse(selectedEventRaw);
+document.addEventListener("DOMContentLoaded", async () => {
+  const response = await fetch("/api/events/setSelectedEvent");
+  data = await response.json();
+  console.log("Fetched selected event from session:", data);
+  selectedEventRaw = data.event
 
-    currentEventId = selectedEvent.event_id;
+    if (selectedEventRaw) {
+      try {
+        const selectedEvent = selectedEventRaw;
+        console.log("Parsed selectedEvent:", selectedEvent);
+        currentEventId = selectedEvent.event_id;
 
-    const label = document.getElementById("selected-event-label");
-    if (label && selectedEvent.event_name) {
-      label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
+        const label = document.getElementById("selected-event-label");
+        if (label && selectedEvent.event_name) {
+          label.textContent = ` ${selectedEvent.event_name} (${selectedEvent.location})`;
+        }
+
+    } catch (e) {
+      console.error("Could not parse selectedEvent from localStorage", e); //endre dette ???????????????????+
     }
-
-  } catch (e) {
-    console.error("Could not parse selectedEvent from localStorage", e);
   }
-}
+});
+
+
 
 
 
@@ -209,7 +218,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert("Error: Missing event_id (no event selected)");
       return;
     }
-
     console.log("Sending payload:", payload);
 
     // 3. send til backend
@@ -247,16 +255,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         alert("Save failed: " + (result.error || "unknown"));
       }
   });
-
-
-  const { 
-    event_id, 
-    event_name, 
-    location, 
-    time, 
-    event_description 
-  } = JSON.parse(selectedEventRaw);
-
 
   if (currentEventId) {
     try {
@@ -297,6 +295,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   return data.reply; 
   }
 
+
+
   generateBtn.addEventListener("click", async () => {
     // show skeleton loader on intro input while generating
     try {
@@ -308,16 +308,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       let intro = await askChatGPT(`
     Create a short and engaging reminder SMS message about an upcoming local event. 
     Use the following event information exactly as provided:
-    Event name: ${event_name}
-    Description: ${event_description}
-    Location: ${location}
-    Time: ${time}
+    Event name: ${selectedEventRaw.event_name}
+    Description: ${selectedEventRaw.event_description}
+    Location: ${selectedEventRaw.location}
+    Time: ${selectedEventRaw.time}
 
     Requirements:
     - Write in English
     - Maximum length: 400 characters
     - Must reference ALL the given event information
     - Friendly and inviting tone or match the event description tone
+    - Must end with "Reply with ${selectedEventRaw.event_code} + keyword for additional information."
     `)
   
       // apply intro into textarea and trigger preview
