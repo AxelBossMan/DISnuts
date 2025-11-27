@@ -3,13 +3,7 @@ const router = express.Router();
 const twilio = require("twilio");
 require("dotenv").config();
 
-
-// Sett opp db-tilkobling
-// Bruker SQL-klassen (ikke database.js lenger)
 const db = require("../database/sql");
-const config = require('../database/sqlconfig');       
-const { createDatabaseConnection } = require('../database/database'); 
-const { DateTime } = require("mssql");
 
 // Sett opp Twilio-klient
 const client = twilio(
@@ -21,9 +15,6 @@ const client = twilio(
 let lastPairs = {};
 let bodyText = "";
 
-/*
-  SAVE TEMPLATE
-*/
 router.post("/save", async (req, res) => {
   const intro = req.body.payload.intro || "";
   const keywords = req.body.payload.keywords || {};
@@ -35,10 +26,6 @@ router.post("/save", async (req, res) => {
     return res.status(400).json({ success: false, error: "Missing event_id" });
   }
 
-  // if (!req.session.user.events) {
-  //   req.session.user.events = {};
-  // }
-  
   // oppdater session med event_id
   lastPairs = keywords;
   const payload = { intro, keywords };
@@ -75,9 +62,7 @@ router.get("/load", (req, res) => {
   return res.json({ success: true, payload });
 });
 
-/*
-  SCHEDULE MESSAGE og sende til database tabellen eller sende med en gang
-*/
+
 router.post("/send", async (req, res) => {
   try {
     const { intro, keywords, schedule, event_id } = req.body; 
@@ -96,12 +81,10 @@ router.post("/send", async (req, res) => {
     const eventTime = new Date(event.time);
     console.log("[/send] event.time:", event.time, "->", eventTime);
 
-    // ---- beregn sendTime på en SAFE måte ----
-    const sched = (schedule || "").toString().trim();  // normaliser
+    const sched = (schedule || "").toString().trim();  
     let sendTime;
 
     if (sched === "now" || sched === "") {
-      // send nå -> registrer nåtid i scheduled_messages
       sendTime = new Date();
     } else if (sched === "1h") {
       sendTime = new Date(eventTime.getTime() - 1000 * 60 * 60);
@@ -110,11 +93,10 @@ router.post("/send", async (req, res) => {
     } else if (sched === "24h") {
       sendTime = new Date(eventTime.getTime() - 1000 * 60 * 60 * 24);
     } else {
-      // custom verdi fra frontend – prøv å parse
+      // custom verdi fra frontend 
       sendTime = new Date(sched);
     }
 
-    // viktig: valider før toISOString()
     if (!(sendTime instanceof Date) || isNaN(sendTime.getTime())) {
       console.error("[/send] INVALID sendTime. schedule =", sched, "computed =", sendTime);
       return res.status(400).json({
@@ -202,9 +184,6 @@ router.post("/send", async (req, res) => {
   }
 });
 
-/*
-  INCOMING SMS / KEYWORD HANDLING
-*/
 router.post("/incoming",
   express.urlencoded({ extended: true }),
   express.json(),
@@ -238,7 +217,6 @@ router.post("/incoming",
 
         return res.json({ success: true, matched: key, sid: msg.sid });
       }
-
       return res.json({ success: true, matched: false });
 
     } catch (err) {

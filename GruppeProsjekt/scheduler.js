@@ -61,7 +61,7 @@ async function checkMessagesDue() {
     console.log(`[Scheduler] Job ${job.id} finished.`);
   }
 }
-
+// Kjører funkjson hvert minutt for å sjekke etter meldinger som skal sendes
 setInterval(checkMessagesDue, 60 * 1000);
 
 console.log("Scheduler started.");

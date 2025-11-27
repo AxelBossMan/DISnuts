@@ -6,7 +6,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var helmet = require('helmet');
-var limiter = require('express-rate-limit'); 
 var sessionMiddleware = require('./config/session');
 
 var indexRouter = require('./routes/index');
@@ -18,7 +17,6 @@ var chatRouter= require('./routes/chat');
 var testRouter = require('./routes/test');
 
 var app = express();
-var port = process.env.PORT || 3000;
 
 // middleware
 app.use(logger('dev'));
@@ -33,8 +31,7 @@ app.set('trust proxy', 1);
 const db = require("./database/sql");
 app.locals.db = db;
 
-// statiske filer (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public/login.html"));
@@ -45,18 +42,13 @@ app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));
 });
 
-app.get("/:company/manage", (req, res) => {
-  // samme hoved-side som "/"
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
 // sider
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 // API-ruter
-app.use('/api', smsRouter);          // f.eks. /api/sms eller hva du har der
-app.use('/api/events', eventsRouter); // VIKTIG: nå får du GET /api/events
+app.use('/api', smsRouter);        
+app.use('/api/events', eventsRouter); 
 
 // auth-rute
 app.use('/authenticator', authRouter);
@@ -72,6 +64,9 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
 });
+
+// statiske filer (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 require("./scheduler");
 module.exports = app;

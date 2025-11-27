@@ -7,7 +7,7 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// POST /api/chat  { "prompt": "din tekst her" }
+// POST /api/chat  
 router.post('/', async (req, res) => {
   try { 
     const { prompt } = req.body;
@@ -17,12 +17,11 @@ router.post('/', async (req, res) => {
     }
 
     const response = await client.responses.create({
-      model: 'gpt-4.1-mini',          // eller annet modellnavn
+      model: 'gpt-4.1-mini',         
       instructions: 'You are a helpful assistant.',
-      input: prompt,                  // dette er "prompten"
+      input: prompt,                 
     });
 
-    // hent ren tekst ut av svaret
     // console.log('ChatGPT response:', response);
     const text = response.output[0].content[0].text;
 

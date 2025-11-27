@@ -1,12 +1,8 @@
 
 const express = require("express");
 const router = express.Router();
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
-const { createDatabaseConnection } = require("../database/database")
-const config = require("../database/sqlconfig");
 const { hashPassword, verifyPassword } = require("../crypto/hashing");
 const { encrypt_phoneNumber, decrypt_phoneNumber } = require("../crypto/symmetricCrypto");
 // Use MailerSend instead of nodemailer for sending emails
@@ -140,14 +136,11 @@ router.post("/login", loginLimiter,
         if (!passwordMatch) {
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
-
-        // Lag 2FA-kode 
         const code = Math.floor(100000 + Math.random() * 900000).toString();
 
 
         twoFactorCodes[email] = code;
       
-        // Send kode på e-post
         await sendEmail(email, code);
       
 
