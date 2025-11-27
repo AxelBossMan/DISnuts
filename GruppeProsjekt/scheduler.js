@@ -41,6 +41,7 @@ async function checkMessagesDue() {
     
     // Lag selve meldingen med intro + keywords
     let smsBody = job.intro || "";
+    console.log("RAW DB KEYWORDS:", job.keywords);
 
     // Parse keywords (lagres som JSON-string i DB)
     let keywords = {};
@@ -52,6 +53,7 @@ async function checkMessagesDue() {
     }
 
     // Hvis det finnes keywords, legg dem til meldingen
+    // Hvis det finnes keywords, legg dem til meldingen
     const wordList = Object.keys(keywords);
 
     if (wordList.length > 0) {
@@ -59,12 +61,18 @@ async function checkMessagesDue() {
       for (const w of wordList) {
         smsBody += `• ${w}\n`;
       }
+
+      // SUPER VIKTIG → WhatsApp krever at meldingen ikke ender med \n
+      smsBody += " ";   // <- legg til en space slik at meldingen ikke blir trimmet
     }
 
 
     for (const r of recipients) {
       if (!r.phone_number) continue;
-
+      console.log("======== SCHEDULER SMS BODY ========");
+      console.log(JSON.stringify(smsBody, null, 2));
+      console.log("====================================");
+      
       const msg = await client.messages.create({
         from: fromNumber,
         to: "whatsapp:" + r.phone_number,
