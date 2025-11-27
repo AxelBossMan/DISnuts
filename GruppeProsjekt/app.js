@@ -31,8 +31,7 @@ app.set('trust proxy', 1);
 const db = require("./database/sql");
 app.locals.db = db;
 
-// statiske filer (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public/login.html"));
@@ -65,6 +64,9 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
 });
+
+// statiske filer (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public')));
 
 require("./scheduler");
 module.exports = app;

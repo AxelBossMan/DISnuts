@@ -2,7 +2,8 @@ var express = require('express');
 var path = require('path');
 var router = express.Router();
 
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
+  console.log("REQ COOKIES:", req.cookies);
   if (!req.cookies.companySession) {
     return res.redirect("/login.html");  
   }
@@ -19,6 +20,10 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/events', (req, res) => {
+  if (!req.cookies.companySession) {
+    return res.redirect("/login.html");
+  }
+
   res.sendFile(path.join(__dirname, '../public/events.html'));
 });
 
