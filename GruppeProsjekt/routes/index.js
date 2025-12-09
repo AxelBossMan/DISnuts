@@ -3,24 +3,19 @@ var path = require('path');
 var router = express.Router();
 
 router.get('/', function (req, res) {
-  console.log("REQ COOKIES:", req.cookies);
-  if (!req.cookies.companySession) {
+  console.log("req session user:", req.session.user);
+  if (!req.session.user) {
     return res.redirect("/login.html");  
   }
-
-  let cookieValue = parseInt(req.cookies.cookie)||0;
-  cookieValue += 1;
-
-  res.cookie('cookie', cookieValue, {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    httpOnly: true
-  });
-
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 router.get('/events', (req, res) => {
-  if (!req.cookies.companySession) {
+  console.log("GET /events - Session:", req.session);
+  console.log("GET /events - User:", req.session.user);
+  
+  if (!req.session.user) {
+    console.log("No session.user found, redirecting to login");
     return res.redirect("/login.html");
   }
 

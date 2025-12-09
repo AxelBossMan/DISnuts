@@ -163,13 +163,6 @@ router.post("/verify", async (req, res) => {
     }
     delete twoFactorCodes[email];
 
-     // Sett cookie tilgjengelig for frontend
-     res.cookie("companySession", email, {
-        httpOnly: false,       // frontend må kunne lese dette
-        path: "/",             // cookie gjelder for hele siden
-        maxAge: 1000 * 60 * 60 * 5 // 5 timer
-    });
-
     const id = await db.getIdFromMail(email);
 
     req.session.user = req.session.user = {

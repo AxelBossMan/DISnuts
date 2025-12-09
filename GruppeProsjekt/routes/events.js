@@ -4,12 +4,13 @@ const db = require("../database/sql");
 
 router.get("/", async (req, res) => {
   try {
-    if (!req.cookies.companySession) {
+    if (!req.session.user) {
       return res.redirect("/login");
     }
 
-    const email = req.cookies.companySession;
-    const companyId = await db.getIdFromMail(email);
+    const email = req.session.user.name;
+    // const companyId = await db.getIdFromMail(email);
+    const companyId = req.session.user.id
 
     const events = await db.raw(`
       SELECT * FROM dbo.event WHERE company_id = ${companyId}
