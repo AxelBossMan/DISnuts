@@ -159,17 +159,25 @@ router.post("/send", async (req, res) => {
 
     if (sched === "now" || sched === "") {
       // send med en gang
-      for (const r of recipients) {
-        if (!r.phone_number) continue;
-        
+      const sendOperations = recipients
+      .filter(r => r.phone_number)
+      .map(async (r) => {
         const msg = await client.messages.create({
           from: fromNumber,
-          to: "whatsapp:"+r.phone_number,
+          to: "whatsapp:" + r.phone_number,
           body: smsBody
         });
-        console.log(fromNumber, r.phone_number, smsBody)
-        sent.push({ user_id: r.user_id, to: r.phone_number, sid: msg.sid });
-      }
+
+        console.log(fromNumber, r.phone_number, smsBody);
+
+        return {
+          user_id: r.user_id,
+          to: r.phone_number,
+          sid: msg.sid
+        };
+      });
+
+    const sent = await Promise.all(sendOperations);
 
       return res.json({
         success: true,
