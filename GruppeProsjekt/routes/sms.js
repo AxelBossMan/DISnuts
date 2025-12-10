@@ -169,7 +169,7 @@ router.post("/send", async (req, res) => {
         });
 
         console.log(fromNumber, r.phone_number, smsBody);
-
+        
         return {
           user_id: r.user_id,
           to: r.phone_number,
