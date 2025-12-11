@@ -11,7 +11,7 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN
 );
 
-// In-memory storage for keywords
+
 let lastPairs = {};
 let bodyText = "";
 
