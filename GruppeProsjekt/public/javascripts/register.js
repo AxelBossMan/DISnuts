@@ -12,7 +12,7 @@ form.addEventListener("submit", async function (event) {
 
     if (password !== confirmPassword) {
         alert("Passord og bekreftelse er ikke like.");
-        return; // ikke send request til backend
+        return; 
     }
 
     // Lager et vanlig objekt for å sende til backend
