@@ -16,10 +16,12 @@ function getTwilioClient() {
 
 
 async function checkMessagesDue() {
-  console.log("Scheduler kjører: ", new Date().toISOString());
+  // ta vekk kommentaren under for å se at scheduler kjører
+  // console.log("Scheduler kjører: ", new Date().toISOString());
   
   const client = getTwilioClient();
 
+    //INPUT?????????????????????????????????????????????????????????????
   const jobs = await db.raw(`
     SELECT * FROM dbo.scheduled_messages
     WHERE status = 'scheduled'
@@ -27,7 +29,8 @@ async function checkMessagesDue() {
   `);
 
   if (jobs.length === 0) {
-    console.log("[Scheduler] No messages ready.");
+    //ta vekk kommentaren under for å se at scheduler kjører
+    // console.log("[Scheduler] No messages ready.");
     return;
   }
 
@@ -52,7 +55,7 @@ async function checkMessagesDue() {
       keywords = {};
     }
 
-    // Hvis det finnes keywords, legg dem til meldingen
+    
     // Hvis det finnes keywords, legg dem til meldingen
     const wordList = Object.keys(keywords);
 
@@ -81,7 +84,7 @@ async function checkMessagesDue() {
 
       console.log("[Scheduler] Sent to:", r.phone_number);
     }
-
+    //INPUT?????????????????????????????????????????????????????????????
     await db.raw(`
       UPDATE dbo.scheduled_messages
       SET status='sent'
