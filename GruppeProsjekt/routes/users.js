@@ -5,12 +5,11 @@ const config = require('../database/sqlconfig');
 const { createDatabaseConnection } = require('../database/database'); 
 
 
-// test, for å verifisere db connection
-// GET /users -> extract all users from the database
+
 router.get('/', async (req, res) => {
   try {
     const db = await createDatabaseConnection(config);
-    const users = await db.readAll('users');   // MERK: tabellnavn = users
+    const users = await db.readAll('users');   
     res.json(users);
   } catch (err) {
     console.error('Database error:', err);
