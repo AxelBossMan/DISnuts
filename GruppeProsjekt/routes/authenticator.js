@@ -138,7 +138,8 @@ router.post("/login", loginLimiter,
         }
         const code = Math.floor(100000 + Math.random() * 900000).toString();
 
-
+        console.log("Generated 2FA code for", email, ":", code);
+        
         twoFactorCodes[email] = code;
       
         await sendEmail(email, code);
