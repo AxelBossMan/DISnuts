@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
         .replace(/\s+/g, "-");
     }
 
-    // 5) Send data til frontend
+    // Sender data til frontend /events
     res.json({
       events,
       company_name: companyName,

@@ -129,7 +129,7 @@ router.post("/send", async (req, res) => {
       );
   }
 
-    // Hent alle deltakere
+    // Henter alle deltakere
     const recipients = await db.getRecipientsForEvent(event_id);
     console.log("[/send] recipients:", recipients);
 
@@ -145,7 +145,7 @@ router.post("/send", async (req, res) => {
     const fromNumber = process.env.TWILIO_PHONE_NUMBER;
     const sent = [];
 
-    // BYGG meldingen vi faktisk skal sende: bruk bodyText (fra /save)
+    //bygger teksten til melding 
     let smsBody = bodyText;
     if (!smsBody || smsBody.trim() === "") {
       // fallback hvis /save ikke har blitt kalt
@@ -176,7 +176,7 @@ router.post("/send", async (req, res) => {
           sid: msg.sid
         };
       });
-
+      //asynkront kall for å sende all meldinger på litk
     const sent = await Promise.all(sendOperations);
 
       return res.json({
@@ -188,7 +188,7 @@ router.post("/send", async (req, res) => {
       });
     }
 
-    // ikke "now" → bare scheduled, ingen SMS sendt enda
+    // ikke "now"  bare scheduled, ingen SMS sendt enda
     return res.json({
       success: true,
       type: "scheduled",
@@ -202,10 +202,11 @@ router.post("/send", async (req, res) => {
   }
 });
 
+//INCOMING-------------------------------------------------------//INCOMING-------------------------------------------------------
 router.post("/incoming",
   express.urlencoded({ extended: true }),
   express.json(),
-  async (req, res) => { //INCOMING
+  async (req, res) => { 
     try {
 
       const incomingBody = (req.body.Body || req.body.body || "").toString().trim();
@@ -248,7 +249,7 @@ router.post("/incoming",
         return res.status(404).json({ success: false, error: "Event not found for incoming SMS" });
       }
       
-      // sett inn db her 
+    
       await db.create({
         message: incomingBody,
         from_number: from.replace("whatsapp: "),

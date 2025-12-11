@@ -1,22 +1,17 @@
 const session = require('express-session');
 
-/**
- * Session middleware - small, ready-to-use configuration.
- * For production you should use a persistent store (Redis, SQL, etc.).
- */
+
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    // only secure cookies over HTTPS in production
     secure: false, //BYTT TIL TRUE I FINAL VERSION
     maxAge: 1000 * 60 * 60 * 24 // 1 day
   }
 });
 
 
-// Export the middleware function (do NOT call it here) so app can use it as
-// `app.use(require('./config/session'))`.
+
 module.exports = sessionMiddleware;

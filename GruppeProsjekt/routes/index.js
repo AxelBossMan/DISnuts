@@ -22,6 +22,7 @@ router.get('/events', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/events.html'));
 });
 
+// innpå en event side
 router.get("/:company/manage", (req, res) => {
   if (!req.session.user) {
     console.log("No session.user found, redirecting to login");

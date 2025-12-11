@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const algorithm = 'aes-256-cbc';
 const key = Buffer.from(process.env.users_phoneKey, 'hex');
 
-// Encrypt and Decrypt functions for phone numbers
+// Encrypt and decrypt functions for phone numbers
 let encrypt_phoneNumber = (phone_number) => {
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv(algorithm, key, iv);

@@ -5,7 +5,7 @@ const {body, validationResult} = require("express-validator");
 const rateLimit = require('express-rate-limit');
 const { hashPassword, verifyPassword } = require("../crypto/hashing");
 const { encrypt_phoneNumber, decrypt_phoneNumber } = require("../crypto/symmetricCrypto");
-// Use MailerSend instead of nodemailer for sending emails
+
 const { MailerSend, Sender, Recipient, EmailParams } = require('mailersend');
 
 let db = require("../database/sql");
@@ -28,7 +28,7 @@ const loginLimiter = rateLimit({
 // REGISTER
 // ----------------------
 router.post("/register",
-    // express validator, checks validity of input
+    
     [body("company_name").notEmpty(), body("email").isEmail().withMessage("Ugyldig e-postadresse"), 
     body("password").notEmpty().isLength({ min: 8 }).withMessage("ugyldig passord, min 8 tegn"), body("phone_number").isMobilePhone().withMessage("Ugyldig telefonnummer"), body("confirmPassword")
     .custom((value, { req }) => {
@@ -137,7 +137,7 @@ router.post("/login", loginLimiter,
             return res.status(401).json({ success: false, error: "Invalid login" });
         }
         const code = Math.floor(100000 + Math.random() * 900000).toString();
-
+        //console log for å unngå å sene unødevndi mye mail. Koster penger
         console.log("Generated 2FA code for", email, ":", code);
 
         twoFactorCodes[email] = code;
@@ -153,7 +153,7 @@ router.post("/login", loginLimiter,
 });
 
 
-// VERIFY 2FA CODE
+// VERIFY 2FA CODE - checks code and logs in user
 // ----------------------
 router.post("/verify", async (req, res) => {
     const db = require("../database/sql"); 
@@ -176,11 +176,11 @@ router.post("/verify", async (req, res) => {
     res.json({ success: true, message: "Login successful!" });
 });
 
-
+//blir kalt hvis. vi har flere emmail å sende.
 // E-MAIL FUNCTION
 // ----------------------
 async function sendEmail(email, code) {
-    // Prefer explicit MAILERSEND_API_KEY env var; fall back to generic API_KEY if present
+    
     const apiKey = process.env.MAILERSEND_API_KEY || process.env.API_KEY;
     if (!apiKey) {
         throw new Error('Missing MailerSend API key in MAILERSEND_API_KEY or API_KEY');
@@ -188,7 +188,7 @@ async function sendEmail(email, code) {
 
     const mailerSend = new MailerSend({ apiKey });
 
-    // Sender - fallbacks to EMAIL_USER or a sensible default
+    
     const fromEmail = process.env.EMAIL_USER || process.env.EMAIL_FROM || 'no-reply@example.com';
     const fromName = process.env.EMAIL_NAME || 'Your Service';
     const sentFrom = new Sender(fromEmail, fromName);

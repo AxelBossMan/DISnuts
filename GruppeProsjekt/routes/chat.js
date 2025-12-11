@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
     if (!prompt) {
       return res.status(400).json({ error: "Missing 'prompt' in body" });
     }
-
+    //promt funksjon for chatgpt
     const response = await client.responses.create({
       model: 'gpt-4.1-mini',         
       instructions: 'You are a helpful assistant.',
