@@ -57,7 +57,7 @@ router.get("/load", (req, res) => {
       .json({ success: false, error: "Missing event_id" });
   }
 
-  // sjekk at bruker og events finnes i session
+  //sjekk at bruker og events finnes i session
   if (!req.session.user || !req.session.user.events) {
     return res.json({ success: true, payload: null });
   }
@@ -188,7 +188,7 @@ router.post("/send", async (req, res) => {
       });
     }
 
-    // ikke "now"  bare scheduled, ingen SMS sendt enda
+    // ikke "now"  bare scheduled, ingen SMS sendt  en da
     return res.json({
       success: true,
       type: "scheduled",
@@ -202,7 +202,7 @@ router.post("/send", async (req, res) => {
   }
 });
 
-//INCOMING-------------------------------------------------------//INCOMING-------------------------------------------------------
+//INCOMING-----------------------------------------------------
 router.post("/incoming",
   express.urlencoded({ extended: true }),
   express.json(),

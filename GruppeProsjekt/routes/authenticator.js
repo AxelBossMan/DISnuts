@@ -38,7 +38,7 @@ router.post("/register",
       return true;
     })
     ],
-    // check if valid and process registration
+
     async (req, res) => {
         const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -102,7 +102,7 @@ router.post("/register",
 
 
 // LOGIN (sjekker passord og sender 2FA-kode)
-// ----------------------
+// ------------
 router.post("/login", loginLimiter,
     // express validator 
     [body("email").isEmail(), body("password").notEmpty().isLength({ min: 8 })],
@@ -153,8 +153,8 @@ router.post("/login", loginLimiter,
 });
 
 
-// VERIFY 2FA CODE - checks code and logs in user
-// ----------------------
+// VERIFY 2FA CODE 
+// -----------
 router.post("/verify", async (req, res) => {
     const db = require("../database/sql"); 
     const { email, code } = req.body;
@@ -178,7 +178,7 @@ router.post("/verify", async (req, res) => {
 
 //blir kalt hvis. vi har flere emmail å sende.
 // E-MAIL FUNCTION
-// ----------------------
+// ------------------
 async function sendEmail(email, code) {
     
     const apiKey = process.env.MAILERSEND_API_KEY || process.env.API_KEY;
