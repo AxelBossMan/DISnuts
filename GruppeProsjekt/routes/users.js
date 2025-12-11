@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-const config = require('../database/sqlconfig');           // din config-fil
-const { createDatabaseConnection } = require('../database/database'); // din database.js
+const config = require('../database/sqlconfig');        
+const { createDatabaseConnection } = require('../database/database'); 
 
 
 // test, for å verifisere db connection
