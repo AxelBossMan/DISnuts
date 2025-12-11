@@ -146,6 +146,7 @@ class Database {
     
     return result.recordset.map(row => row.event_code);
   }
+  
 }
 
 module.exports = new Database;

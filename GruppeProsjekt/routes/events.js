@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
     // const companyId = await db.getIdFromMail(email);
     const companyId = req.session.user.id
 
+    //ingen sql inject her fordi companyId kommer fra session
     const events = await db.raw(`
       SELECT * FROM dbo.event WHERE company_id = ${companyId}
     `);
