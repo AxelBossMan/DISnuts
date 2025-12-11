@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
     } catch (e) {
-      console.error("Could not parse selectedEvent from localStorage", e); //endre dette ???????????????????+
+      console.error("Could not parse selectedEvent from localStorage", e); 
     }
   }
 });
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Send-knappen
   sendBtn.addEventListener("click", async () => {
-    // 1. legg inn schedule i payload
+    // 1. schedule i payload
     if (scheduleSelect.value === "custom") {
       // bruker valgt dato/tid
       payload.schedule = customSchedule.value;          // f.eks. "2025-11-24T14:00"
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       payload.schedule = scheduleSelect.value;
     }
 
-    // 2. legg inn event_id i payload (fra selectedEvent)
+    // 2. event_id i payload (fra selectedEvent)
     payload.event_id = currentEventId;
 
     if (!payload.event_id) {
@@ -232,7 +232,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const result = await response.json();
 
     if (result.success) {
-      // nå scheduler vi bare, ikke sender direkte SMS
+     
       alert("Message scheduled!");
     } else {
       alert("Error: " + result.error);
@@ -264,11 +264,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (data.success && data.payload) {
         const { intro, keywords } = data.payload;
 
-        // sett intro-tekst i tekstboksen
+        
         introInput.value = intro || "";
 
-        // fyll tabellen med keywords
-        const pairs = keywords || {}; // f.eks. { SKI: 'nordmann' }
+        
+        const pairs = keywords || {}; 
 
         Object.entries(pairs).forEach(([word, answer]) => {
           addRow(word, answer);
