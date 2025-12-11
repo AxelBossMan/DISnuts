@@ -37,6 +37,10 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
+app.get("/PID", (req, res) => {
+   console.log(`Handled by PID ${process.pid}`);
+    res.send(`Handled by PID ${process.pid}`);
+});
 // register-side
 app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));

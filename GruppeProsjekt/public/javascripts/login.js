@@ -2,6 +2,8 @@ const loginForm = document.getElementById("loginForm");
 const errorMsg = document.getElementById("errorMsg");
 const createAccountBtn = document.getElementById("createAccountBtn");
 
+
+
 loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
